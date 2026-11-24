@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dat Bike Smart Stock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: confident, sporty, clear — an operations tool a dealer can read in 5 seconds
+   IDEA: a dispatch board for Dat Bike's dealer network — stock flows like charge along a line
+   PICTURE: a live network map of Vietnam's dealers, orange arrows = proposed transfers
+   COLOUR and TYPE: Dat Bike black / white / orange; red = thiếu, blue = dư; Be Vietnam Pro
+   LAYOUT: dark hero with live map, then the 4-screen dashboard, then the pitch sections */
+:root{color-scheme:light dark;
+--bg:light-dark(#ffffff,#0d0d0e);--bg2:light-dark(#f4f3f1,#151517);--card:light-dark(#ffffff,#1a1a1d);
+--ink:light-dark(#121212,#f2f2f2);--mute:light-dark(#5e5e65,#a3a3ab);--line:light-dark(#e5e3df,#2b2b30);
+--or:#ff5a1f;--or-ink:light-dark(#d4400a,#ff7a45);--or-soft:light-dark(#fff0e9,#2a1810);
+--red:light-dark(#d93036,#ff5c61);--red-soft:light-dark(#fdecec,#2b1314);
+--blue:light-dark(#2563eb,#6b9bff);--blue-soft:light-dark(#eaf0fe,#131c30);
+--green:light-dark(#15803d,#4ade80);--green-soft:light-dark(#e8f6ed,#10231a);
+--r:16px;--hist:light-dark(#b4bfcf,#5d6880)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Be Vietnam Pro",system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{line-height:1.08;text-wrap:balance;margin:0}
+h2{font-size:clamp(28px,3.6vw,40px);font-weight:800;letter-spacing:-.02em}
+h3{font-size:18px;font-weight:700}
+p{margin:0}
+button,select,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--or);outline-offset:2px}
+.band{padding:clamp(36px,5vw,72px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+.mute{color:var(--mute)}
+.scroll{overflow-x:auto}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:20;background:#0d0d0e;color:#fff;border-bottom:1px solid #222}
+.nav .wrap{display:flex;align-items:center;gap:20px;padding:10px max(5vw,16px);max-width:none}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;flex:none}
+.logo{width:38px;height:38px;border-radius:10px;background:var(--or);display:grid;place-items:center}
+.brand b{display:block;font-weight:800;font-size:17px;letter-spacing:.02em;line-height:1}
+.brand small{display:block;font-size:12px;color:#a3a3ab;margin-top:3px}
+.links{display:flex;gap:4px;margin-left:auto;overflow-x:auto}
+.links a{color:#d6d6da;text-decoration:none;padding:10px 12px;border-radius:999px;font-size:15px;white-space:nowrap}
+.links a:hover{color:#fff;background:#1f1f23}
+@media(max-width:760px){.bt small{display:none}.links a{padding:10px 10px;font-size:14px}}
+@media(max-width:420px){.bt{display:none}}
+main[hidden]{display:none}
+.pt{font-size:clamp(30px,4vw,44px);font-weight:800;letter-spacing:-.02em}
+.hero .wrap.one{display:block;max-width:880px;margin:0 auto 0 0}
+.toast:empty{display:none}
+.phead{padding-block:clamp(40px,6vw,80px)}
+.feats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:28px}
+.feat{display:flex;flex-direction:column;gap:8px;padding:20px;border:1px solid var(--line);border-radius:var(--r);text-decoration:none;color:inherit;background:var(--card);transition:border-color .15s,transform .15s}
+.feat:hover{border-color:var(--or);transform:translateY(-2px)}
+.feat .ic{width:44px;height:44px;border-radius:12px;background:var(--or-soft);color:var(--or-ink);display:grid;place-items:center;margin-bottom:6px}
+.feat p{color:var(--mute);font-size:15px;flex:1}
+.feat .go{display:flex;align-items:center;gap:6px;color:var(--or-ink);font-weight:600;font-size:14px}
+@media(max-width:980px){.feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.feats{grid-template-columns:minmax(0,1fr)}}
+.ctab{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:20px}
+.ctab p{max-width:36em}
+.exg{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:14px;margin-top:26px;align-items:start}
+@media(max-width:860px){.exg{grid-template-columns:minmax(0,1fr)}}
+.exres{background:#0d0d0e;color:#fff;border-radius:var(--r);padding:22px}
+.exres .big{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}
+.exres .big b{font-size:56px;font-weight:800;color:var(--or);line-height:1}
+.exres .big span{color:#c9c9cf}
+.ul{margin:0;padding-left:18px;display:grid;gap:8px;color:#d6d6da}
+.ul b{color:#fff}
+.logic{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:26px}
+.logic>div{border-top:3px solid var(--or);background:var(--bg2);border-radius:0 0 var(--r) var(--r);padding:20px}
+.logic small{color:var(--or-ink);font-weight:600;font-size:13px}
+.logic h3{margin:4px 0 8px}
+.logic p{color:var(--mute);font-size:15px}
+@media(max-width:860px){.logic{grid-template-columns:minmax(0,1fr)}}
+.flinks{display:flex;gap:16px;flex-wrap:wrap}.flinks a{color:#d6d6da}
+
+/* hero */
+.hero{background:#0d0d0e;color:#fff;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:auto -10% -40% 40%;height:90%;background:radial-gradient(closest-side,rgba(255,90,31,.28),transparent);pointer-events:none}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(24px,4vw,56px);align-items:center;position:relative}
+.tag{display:inline-flex;gap:8px;align-items:center;font-size:13px;color:#ffb08f;background:#2a1810;border:1px solid #4a2516;padding:5px 12px;border-radius:999px}
+.tag i{width:7px;height:7px;border-radius:50%;background:var(--or)}
+.hero h1{font-size:clamp(36px,5.2vw,60px);font-weight:800;letter-spacing:-.03em;margin:18px 0 18px}
+.hero h1 em{font-style:normal;color:var(--or)}
+.hero p.lead{font-size:18px;color:#c9c9cf;max-width:36em}
+.hero .btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 20px;border-radius:999px;border:1px solid transparent;font-weight:600;text-decoration:none;cursor:pointer;font-size:15px;background:var(--bg2);color:var(--ink)}
+.btn.or{background:var(--or);color:#fff}
+.btn.or:hover{background:#ff6e3a}
+.btn.ghost{background:transparent;border-color:#3a3a40;color:#fff}
+.btn.line{background:transparent;border-color:var(--line)}
+.btn.sm{min-height:40px;padding:0 14px;font-size:14px}
+.hstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:34px;max-width:560px}
+.hstats div{border-top:2px solid #2c2c31;padding-top:10px}
+.hstats b{display:block;font-size:clamp(24px,3vw,32px);font-weight:800;font-variant-numeric:tabular-nums}
+.hstats span{font-size:13px;color:#a3a3ab}
+.hstats div:last-child{border-color:var(--or)}
+.mapcard{background:#151517;border:1px solid #26262b;border-radius:22px;padding:16px;position:relative}
+.mapcard .fig{min-height:470px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:#a3a3ab}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.fig{position:relative;min-height:340px}.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+.map text{font-family:inherit}
+@keyframes flow{to{stroke-dashoffset:-12}}
+.flow{stroke-dasharray:3 3;animation:flow 1.2s linear infinite}
+@media(prefers-reduced-motion:reduce){.flow{animation:none}html{scroll-behavior:auto}}
+@media(max-width:860px){.hero .wrap{grid-template-columns:minmax(0,1fr)}.mapcard .fig{min-height:420px}}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:28px;counter-reset:s}
+.step{background:var(--bg2);border-radius:var(--r);padding:20px;position:relative}
+.step .ic{width:44px;height:44px;border-radius:12px;background:var(--or-soft);color:var(--or-ink);display:grid;place-items:center;margin-bottom:14px}
+.step small{color:var(--or-ink);font-weight:600;font-size:13px}
+.step h3{margin:2px 0 6px}
+.step p{color:var(--mute);font-size:15px}
+.step:not(:last-child)::after{content:"";position:absolute;right:-12px;top:42px;width:10px;height:2px;background:var(--or)}
+@media(max-width:900px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}.step::after{display:none}}
+@media(max-width:520px){.steps{grid-template-columns:minmax(0,1fr)}}
+.head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:12px 24px}
+.head p{max-width:40em}
+
+/* app */
+#app{background:var(--bg2)}
+.apphead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:end;margin-bottom:18px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:4px;background:var(--card);border:1px solid var(--line);border-radius:999px;margin-bottom:14px}
+.tabs a{flex:none;display:flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;border-radius:999px;text-decoration:none;color:var(--mute);font-weight:600;font-size:15px}
+.tabs a b{font-size:12px;background:var(--line);color:var(--ink);border-radius:999px;padding:1px 7px;font-weight:700}
+.tabs a[aria-current]{background:var(--ink);color:var(--bg)}
+.tabs a[aria-current] b{background:var(--or);color:#fff}
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:end;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;margin-bottom:18px;position:sticky;top:59px;z-index:10}
+.f{display:flex;flex-direction:column;gap:4px}
+.f label,.f>span{font-size:13px;color:var(--mute);font-weight:500}
+select,input[type=number]{min-height:44px;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:0 12px;font-size:16px}
+select{appearance:none;padding-right:34px;background-image:linear-gradient(45deg,transparent 50%,var(--mute) 50%),linear-gradient(135deg,var(--mute) 50%,transparent 50%);background-position:calc(100% - 17px) 19px,calc(100% - 12px) 19px;background-size:5px 5px;background-repeat:no-repeat;cursor:pointer}
+.seg{display:flex;background:var(--bg2);border-radius:10px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;min-height:38px;padding:0 12px;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;color:var(--mute);white-space:nowrap}
+.seg button[aria-pressed=true]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.filters .f.end{margin-left:auto}
+@media(max-width:700px){.filters{position:static}.filters .f{flex:1 1 140px}.filters .f.end{margin-left:0;flex-basis:100%}.filters .f:has(#hSeg){flex-basis:100%}.seg button{flex:1}.tabs{display:grid;grid-template-columns:1fr 1fr;border-radius:16px}.tabs a{justify-content:center;padding:0 8px;font-size:14px;border-radius:12px;text-align:center;line-height:1.2}}
+.screen[hidden]{display:none}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.card h3{margin-bottom:4px}
+.card .sub{font-size:14px;color:var(--mute);margin-bottom:14px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.kpi>span{font-size:14px;color:var(--mute)}
+.kpi b small{font-size:.5em;font-weight:700;margin-left:4px}
+.kpi b{display:block;font-size:clamp(26px,3vw,34px);font-weight:800;line-height:1.15;font-variant-numeric:tabular-nums;margin:4px 0 2px}
+.kpi small{font-size:13px;color:var(--mute)}
+.kpi.hot{background:var(--or);border-color:var(--or);color:#fff}.kpi.hot>span,.kpi.hot>small{color:#ffe3d6}
+.kpi .red{color:var(--red)}
+@media(max-width:860px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.grid2{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px}
+.grid2b{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+@media(max-width:980px){.grid2,.grid2b{grid-template-columns:minmax(0,1fr)}}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{font-size:13px;color:var(--mute);font-weight:600;text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr:last-child td{border-bottom:0}
+tr.click{cursor:pointer}tr.click:hover td{background:var(--bg2)}
+th.num,td.num{text-align:right}
+.dname b{display:block;font-weight:600}.dname small{color:var(--mute);font-size:13px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.pill.short{background:var(--red-soft);color:var(--red)}
+.pill.over{background:var(--blue-soft);color:var(--blue)}
+.pill.ok{background:var(--green-soft);color:var(--green)}
+.pill.pend{background:var(--bg2);color:var(--mute)}
+.pill.acc{background:var(--green-soft);color:var(--green)}
+.pill.adj{background:var(--or-soft);color:var(--or-ink)}
+.pill.dec{background:var(--red-soft);color:var(--red)}
+.gap{display:grid;grid-template-columns:3.2em minmax(60px,1fr);gap:8px;align-items:center}
+.gap .num{font-weight:700}
+.dbar{position:relative;height:10px;background:var(--bg2);border-radius:5px}
+.dbar::before{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;background:var(--mute);opacity:.5}
+.dbar i{position:absolute;top:0;bottom:0;border-radius:5px}
+.pos{color:var(--blue)}.neg{color:var(--red)}
+.alerts{display:grid;gap:8px}
+.alert{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--bg2);font-size:14px}
+.alert .dot{width:10px;height:10px;border-radius:50%}
+.alert b{font-weight:600}
+.empty{padding:28px;text-align:center;color:var(--mute)}
+.sw{display:inline-block;width:12px;height:12px;border-radius:50%;border:1px solid rgba(128,128,128,.5);vertical-align:-1px;margin-right:6px}
+.mapwrap{background:#151517;border-radius:12px;color:#fff;padding:10px}
+.mapwrap .fig{min-height:440px}
+
+/* forecast */
+.fchead{display:flex;flex-wrap:wrap;gap:12px;align-items:end;justify-content:space-between;margin-bottom:12px}
+.fcfig{min-height:300px}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.stat{background:var(--bg2);border-radius:12px;padding:12px}
+.stat span{font-size:13px;color:var(--mute)}
+.stat b{display:block;font-size:24px;font-weight:800;font-variant-numeric:tabular-nums}
+.cmp{margin-top:14px;display:grid;gap:8px}
+.cmp .row{display:grid;grid-template-columns:7em minmax(0,1fr) 3.5em;gap:10px;align-items:center;font-size:14px}
+.cmp .bar{height:14px;border-radius:7px;background:var(--bg2);overflow:hidden}
+.cmp .bar i{display:block;height:100%;border-radius:7px}
+.conf{font-size:13px;font-weight:600}
+.note{font-size:14px;color:var(--mute);margin-top:12px}
+
+/* recs */
+.recbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px}
+.chips{display:flex;gap:6px;overflow-x:auto}
+.chips button{flex:none;border:1px solid var(--line);background:var(--card);min-height:40px;padding:0 14px;border-radius:999px;cursor:pointer;font-size:14px;font-weight:600;color:var(--mute)}
+.chips button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.recs{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,360px),1fr));gap:14px}
+.rec{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px}
+.rec.s-dec{opacity:.6}
+.rec.s-acc,.rec.s-adj{border-color:color-mix(in srgb,var(--green) 40%,var(--line))}
+.rectop{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:14px;font-weight:600}
+.route{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:10px;align-items:center}
+.route small{display:block;font-size:12px;color:var(--mute)}
+.route b{display:block;font-weight:700;line-height:1.25}
+.route span{font-size:13px}
+.route>div:last-child{text-align:right}
+.qty{text-align:center;background:var(--or-soft);color:var(--or-ink);border-radius:12px;padding:6px 12px}
+.qty b{font-size:26px;font-weight:800;line-height:1}
+.qty small{color:inherit}
+.why{font-size:14px;color:var(--mute)}
+.meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0}
+.meta div{background:var(--bg2);border-radius:10px;padding:8px 10px}
+.meta dt{font-size:12px;color:var(--mute)}
+.meta dd{margin:0;font-weight:700;font-size:15px;white-space:nowrap}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
+.acts .btn{flex:1 1 auto}
+.btn.ok{background:var(--green);color:#fff}
+.btn.no{background:transparent;border-color:var(--line);color:var(--red)}
+.stepper{display:flex;align-items:center;gap:6px;flex:1 1 100%}
+.stepper button{width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:var(--bg);font-size:20px;cursor:pointer}
+.stepper input{width:72px;text-align:center}
+
+/* impact */
+.imp-tbl td:first-child{font-weight:500}
+.delta{font-size:13px;font-weight:700}
+.delta.good{color:var(--green)}.delta.bad{color:var(--red)}
+.wf{display:grid;gap:10px}
+.wf .row{display:grid;grid-template-columns:11em minmax(0,1fr) 7em;gap:10px;align-items:center;font-size:14px}
+.wf .bar{height:22px;background:var(--bg2);border-radius:6px;position:relative}
+.wf .bar i{position:absolute;top:0;bottom:0;border-radius:6px}
+.wf .row.total{border-top:1px solid var(--line);padding-top:10px;font-weight:700}
+@media(max-width:520px){.wf .row{grid-template-columns:minmax(0,1fr) 6.5em}.wf .bar{grid-column:1/-1;grid-row:2}}
+.assume{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.assume label{font-size:13px;color:var(--mute);display:block;margin-bottom:4px}
+.assume input{width:100%}
+.cond{display:grid;gap:8px;margin-top:12px}
+.cond div{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:14px;padding:8px 12px;background:var(--bg2);border-radius:10px}
+.interp{border-left:4px solid var(--or);background:var(--or-soft);padding:14px 16px;border-radius:0 12px 12px 0;font-size:15px;margin-top:14px}
+.dg{display:grid;gap:10px}
+.dg .row{display:grid;grid-template-columns:9em minmax(0,1fr) 6.5em;gap:10px;align-items:center;font-size:14px}
+.dg .bars{display:grid;gap:3px}
+.dg .dbar{height:8px}
+@media(max-width:520px){.dg .row{grid-template-columns:minmax(0,1fr) 6.5em}.dg .bars{grid-column:1/-1;grid-row:2}}
+.seg.inline{display:inline-flex}
+
+/* pitch sections */
+.cmpT{margin-top:24px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.cmpT table{font-size:16px}
+.cmpT th{padding:14px 18px;font-size:14px;white-space:normal}
+.cmpT td{padding:14px 18px}
+.cmpT th:last-child{background:var(--or);color:#fff}
+.cmpT td:last-child{font-weight:600;background:var(--or-soft)}
+.cmpT td:first-child{color:var(--mute)}
+.callout{margin-top:18px;font-size:18px;max-width:46em}
+.callout b{color:var(--or-ink)}
+.vals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:26px}
+.val{border-radius:var(--r);padding:22px;background:var(--card);border:1px solid var(--line)}
+.val:first-child{background:#0d0d0e;color:#fff}
+.val:first-child p{color:#c9c9cf}
+.val small{font-weight:600;color:var(--or-ink);font-size:13px}
+.val:first-child small{color:var(--or)}
+.val h3{font-size:22px;margin:4px 0 10px}
+.val p{color:var(--mute)}
+@media(max-width:820px){.vals{grid-template-columns:minmax(0,1fr)}}
+.why6{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:26px;padding:0;list-style:none}
+.why6 li{display:flex;gap:12px;align-items:flex-start;padding:16px;border:1px solid var(--line);border-radius:14px}
+.why6 svg{flex:none;color:var(--or)}
+@media(max-width:820px){.why6{grid-template-columns:minmax(0,1fr)}}
+.dark{background:#0d0d0e;color:#fff}
+.dark .mute{color:#a3a3ab}
+details{margin-top:18px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 18px}
+summary{cursor:pointer;font-weight:600;min-height:28px}
+textarea{width:100%;min-height:150px;border:1px solid var(--line);border-radius:10px;background:var(--bg);padding:10px;font:14px/1.5 ui-monospace,Menlo,monospace;margin:10px 0}
+footer{background:#0d0d0e;color:#a3a3ab;font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(120px);background:#121212;color:#fff;padding:12px 18px;border-radius:999px;font-size:14px;transition:transform .25s;z-index:50;border:1px solid #333}
+.toast.show{transform:translateX(-50%)}
+@media(max-width:600px){table{font-size:14px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:8em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:7.5em;margin-inline-start:-8em;white-space:normal;color:var(--mute);font-size:13px}.stack td:empty{display:none}.stack td.num{text-align:start}}
+
+.links a[aria-current]{background:var(--or);color:#fff;font-weight:600}
+.links a[aria-current]:hover{background:#ff6e3a}
+.lang{display:flex;background:#1f1f23;border-radius:999px;padding:3px;flex:none}
+.lang button{border:0;background:transparent;color:#a3a3ab;font-weight:700;font-size:13px;min-height:36px;min-width:40px;border-radius:999px;cursor:pointer}
+.lang button[aria-pressed=true]{background:#fff;color:#0d0d0e}
+@media(max-width:600px){.nav .wrap{gap:10px}.links a{padding:9px 9px;font-size:13px}.lang button{min-width:34px}}
+.legend i.ln{width:16px;height:3px;border-radius:2px;background:var(--or);vertical-align:3px}
+.legend i.dash{width:16px;height:0;border-top:2px dashed var(--ink);border-radius:0;vertical-align:3px}
+.lgc{margin-top:10px}
+.mapfig{min-height:500px}
+.mapwrap .mapfig{min-height:520px}
+.models{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:26px}
+.model{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px;display:flex;flex-direction:column;gap:10px}
+.model.new{border-color:color-mix(in srgb,var(--or) 45%,var(--line))}
+.mtop{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.mtop h3{font-size:20px}
+.badge{background:var(--or);color:#fff;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;flex:none}
+.price{font-size:22px;font-weight:800}
+.model ul{margin:0;padding-left:18px;color:var(--mute);font-size:15px;display:grid;gap:4px;flex:1}
+.model .cols{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--mute);flex-wrap:wrap}
+.model .cols i{width:18px;height:18px;border-radius:50%;border:1px solid rgba(128,128,128,.5)}
+.model .cols span{margin-left:4px}
+.model .go{color:var(--or-ink);font-weight:600;font-size:14px;text-decoration:none;min-height:32px;display:flex;align-items:center}
+@media(max-width:900px){.models{grid-template-columns:minmax(0,1fr)}}
+.filters .f.end{align-self:end}
+
+.legend i.hatch{border-radius:3px;background:repeating-linear-gradient(45deg,var(--hist) 0 3px,color-mix(in srgb,var(--hist) 40%,transparent) 3px 6px)}
+.pick{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 16px;background:var(--bg2);border-radius:12px;padding:10px 14px;margin-bottom:6px;min-height:68px}
+.pick small{display:block;font-size:13px;color:var(--mute)}
+.pick b{font-size:24px;font-weight:800;color:var(--or-ink);font-variant-numeric:tabular-nums}
+.pick b span{font-size:14px;font-weight:600;color:var(--mute)}
+.pick .pk{display:flex;gap:6px;flex-wrap:wrap}
+#fcFig{border-radius:8px}
+
+@media(max-width:700px){
+.nav .wrap{flex-wrap:wrap;gap:8px 10px;padding:8px 16px}
+.bt{display:block}.bt small{display:block}
+.lang{margin-left:auto}
+.links{order:3;flex:1 1 100%;margin:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;background:#1a1a1d;border-radius:999px;padding:3px;overflow:visible}
+.links a{display:flex;align-items:center;justify-content:center;text-align:center;padding:0 4px;min-height:40px;font-size:clamp(12.5px,3.6vw,14px);white-space:nowrap}
+html{scroll-padding-top:120px}
+}
+
+h1,h2,h3{line-height:1.22}
+.hero h1{line-height:1.2;margin:20px 0 20px}
+.pt{line-height:1.22}
+.hero h1{letter-spacing:-.01em}h2,.pt{letter-spacing:-.005em}
+@media(max-width:700px){.links{display:flex;gap:2px}.links a{flex:1 1 auto;padding:0 8px}}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+</head>
+<body>
+<nav class="nav"><div class="wrap">
+  <a class="brand" href="#home" aria-label="Dat Bike Smart Stock Network">
+    <span class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg></span>
+    <span class="bt"><b>DAT BIKE</b><small>Smart Stock Network</small></span>
+  </a>
+  <div class="links">
+    <a href="#home" data-p="home" data-en="Home">Trang chủ</a>
+    <a href="#cach-hoat-dong" data-p="how" data-en="How it works">Cách hoạt động</a>
+    <a href="#dashboard" data-p="dashboard" data-en="Dashboard">Bảng điều khiển</a>
+  </div>
+  <div class="lang" role="group" aria-label="Ngôn ngữ / Language"><button data-lang="vi" aria-pressed="true">VI</button><button data-lang="en" aria-pressed="false">EN</button></div>
+</div></nav>
+
+<main data-page="home">
+<header class="hero band"><div class="wrap">
+  <div>
+    <span class="tag"><i></i><span data-en="Concept prototype · Dealers can pay, but can they sell?">Bản thử nghiệm ý tưởng · Đại lý có vốn, nhưng có bán được hàng?</span></span>
+    <h1 data-en="Right model, right dealer, &lt;em&gt;before&lt;/em&gt; stock runs out.">Đúng mẫu xe, đúng đại lý, <em>trước khi</em> thiếu hàng.</h1>
+    <p class="lead" data-en="Smart Stock Network forecasts demand by model, colour and region, then recommends moving bikes from dealers with surplus to dealers running short. Dat Bike coordinates supply; dealers still make the call.">Smart Stock Network dự báo nhu cầu theo mẫu xe, màu sắc và khu vực, rồi đề xuất luân chuyển xe từ đại lý đang dư sang đại lý đang thiếu. Dat Bike điều phối nguồn hàng, đại lý vẫn tự quyết.</p>
+    <div class="btns">
+      <a class="btn or" href="#dashboard"><span data-en="Open dashboard">Mở bảng điều khiển</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="btn ghost" href="#cach-hoat-dong" data-en="See how it works">Xem cách hoạt động</a>
+    </div>
+    <div class="hstats">
+      <div><b id="hsDealers">–</b><span data-en="dealers in the sample network">đại lý trong mạng lưới mẫu</span></div>
+      <div><b id="hsShort">–</b><span data-en="bikes short, next 30 days">xe thiếu hụt dự kiến, 30 ngày</span></div>
+      <div><b id="hsMove">–</b><span data-en="bikes that can be moved now">xe có thể luân chuyển ngay</span></div>
+    </div>
+  </div>
+  <div class="mapcard">
+    <div class="legend"><span><i style="background:var(--red)"></i><span data-en="Shortage">Thiếu hàng</span></span><span><i style="background:var(--blue)"></i><span data-en="Surplus">Dư hàng</span></span><span><i style="background:#8a8a92"></i><span data-en="Balanced">Cân bằng</span></span><span><i class="ln"></i><span data-en="Proposed transfer">Đề xuất điều chuyển</span></span></div>
+    <div class="fig mapfig"><svg id="heroMap" class="map" viewBox="0 0 140 160" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map"></svg></div>
+  </div>
+</div></header>
+
+<section class="band"><div class="wrap">
+  <div class="head"><h2 data-en="What this website helps you do">Website này giúp bạn làm gì</h2><p class="mute" data-en="One place for Dat Bike and its dealers to see network-wide stock, spot shortages early and decide transfers based on data.">Một nơi để Dat Bike và đại lý cùng nhìn tồn kho toàn mạng lưới, thấy trước chỗ sắp thiếu hàng và quyết định chuyển xe dựa trên số liệu.</p></div>
+  <div class="feats">
+    <a class="feat" href="#overview"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="9" r="2.5"/><circle cx="9" cy="18" r="2.5"/><path d="M8 7.5l7.7 1M7 8.5l1.6 7"/></svg></span><h3 data-en="Network Overview">Tổng quan mạng lưới</h3><p data-en="Stock, demand and surplus/shortage alerts for every dealer on one screen.">Tồn kho, nhu cầu và cảnh báo dư/thiếu của mọi đại lý trên một màn hình.</p><span class="go"><span data-en="View overview">Xem tổng quan</span> →</span></a>
+    <a class="feat" href="#forecast"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></span><h3 data-en="Demand Forecast">Dự báo nhu cầu</h3><p data-en="30–90 day demand forecast by dealer, model and colour, with a confidence level.">Dự báo nhu cầu 30–90 ngày theo đại lý, mẫu xe và màu, kèm độ tin cậy.</p><span class="go"><span data-en="View forecast">Xem dự báo</span> →</span></a>
+    <a class="feat" href="#recommend"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h13l-3-3M20 17H7l3 3"/></svg></span><h3 data-en="Smart Recommendation">Đề xuất thông minh</h3><p data-en="Transfer proposals from surplus to shortage; dealers accept, adjust or decline.">Đề xuất chuyển xe từ nơi dư sang nơi thiếu, đại lý chấp nhận, điều chỉnh hoặc từ chối.</p><span class="go"><span data-en="Review proposals">Duyệt đề xuất</span> →</span></a>
+    <a class="feat" href="#impact"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></span><h3 data-en="Impact Simulation">Mô phỏng tác động</h3><p data-en="Before vs after: shortage, stock, costs and net value.">So sánh trước và sau điều chuyển: thiếu hụt, tồn kho, chi phí và giá trị ròng.</p><span class="go"><span data-en="Simulate impact">Mô phỏng tác động</span> →</span></a>
+  </div>
+</div></section>
+
+
+<section class="band"><div class="wrap">
+  <div class="head"><h2 data-en="Everyone wins">Cả ba bên cùng có lợi</h2></div>
+  <div class="vals">
+    <div class="val"><small data-en="Brand">Thương hiệu</small><h3>Dat Bike</h3><p data-en="More sell-out opportunities, better use of supply and support for network expansion, without pushing more stock into the system.">Tăng cơ hội bán ra, tối ưu nguồn hàng và hỗ trợ mở rộng mạng lưới mà không cần bơm thêm tồn kho vào hệ thống.</p></div>
+    <div class="val"><small data-en="Partners">Đối tác</small><h3 data-en="Dealers">Đại lý</h3><p data-en="Lower inventory risk, faster capital recovery, better cash flow and profitability.">Giảm rủi ro tồn kho, thu hồi vốn nhanh hơn, cải thiện dòng tiền và khả năng sinh lời.</p></div>
+    <div class="val"><small data-en="Customers">Khách hàng</small><h3 data-en="Riders">Người mua xe</h3><p data-en="Easier to find the model and colour they want nearby, less waiting due to stock-outs.">Dễ tìm đúng mẫu và màu mong muốn ở gần mình, giảm thời gian chờ vì thiếu hàng.</p></div>
+  </div>
+</div></section>
+
+<section class="band dark"><div class="wrap ctab">
+  <div><h2 data-en="Try the Dealer A – B example">Thử ngay với ví dụ Đại lý A – B</h2><p class="mute" style="margin-top:10px" data-en="Dealer A has 15 bikes too many, Dealer B is 15 short. See what the system proposes and decide like a dealer.">Đại lý A dư 15 xe, Đại lý B thiếu 15 xe. Xem hệ thống đề xuất gì và tự quyết định như một đại lý.</p></div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap"><button class="btn or" data-runab><span data-en="Run the example">Chạy ví dụ</span> →</button><a class="btn ghost" href="#cach-hoat-dong" data-en="How it works">Cách hoạt động</a></div>
+</div></section>
+</main>
+
+<main data-page="how" hidden>
+<header class="hero band phead"><div class="wrap one">
+  <span class="tag"><i></i><span data-en="How it works">Cách hoạt động</span></span>
+  <h1 data-en="From a sales signal to a bike moved to the right place">Từ tín hiệu bán hàng đến một chuyến xe được chuyển đúng chỗ</h1>
+  <p class="lead" data-en="Smart Stock Network does not sell for dealers and does not change the 3S model. It looks across the whole network, forecasts ahead and suggests; dealers decide.">Smart Stock Network không bán hàng thay đại lý và không thay mô hình 3S. Hệ thống nhìn toàn mạng lưới, dự báo trước và gợi ý; đại lý là người quyết định.</p>
+</div></header>
+<section class="band"><div class="wrap">
+  <div class="head"><h2 data-en="Four steps, from sales signal to dealer decision">Bốn bước, từ tín hiệu bán hàng đến quyết định của đại lý</h2></div>
+  <div class="steps">
+    <div class="step"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18V9M10 18V5M16 18v-6M22 18H2"/></svg></div><small data-en="Step 1">Bước 1</small><h3 data-en="Demand Sensing">Nắm bắt nhu cầu</h3><p data-en="Collect sales, stock and demand signals from every dealer.">Thu thập doanh số, tồn kho và tín hiệu nhu cầu từ từng đại lý.</p></div>
+    <div class="step"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></div><small data-en="Step 2">Bước 2</small><h3 data-en="Demand Forecasting">Dự báo nhu cầu</h3><p data-en="Forecast demand by model, colour and region for the next 30–90 days.">Dự báo nhu cầu theo mẫu xe, màu sắc và khu vực cho 30–90 ngày tới.</p></div>
+    <div class="step"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h13l-3-3M20 17H7l3 3"/></svg></div><small data-en="Step 3">Bước 3</small><h3 data-en="Smart Allocation">Phân bổ thông minh</h3><p data-en="Propose moving bikes from surplus to shortage, or adjusting order volumes.">Đề xuất chuyển xe từ nơi dư sang nơi thiếu, hoặc điều chỉnh lượng nhập.</p></div>
+    <div class="step"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l4 4L19 6"/></svg></div><small data-en="Step 4">Bước 4</small><h3 data-en="Dealer Approval">Đại lý phê duyệt</h3><p data-en="Dealers see the reason and cost, then accept, adjust or decline.">Đại lý xem lý do, chi phí và quyết định: chấp nhận, điều chỉnh hay từ chối.</p></div>
+  </div>
+</div></section>
+<section class="band" style="background:var(--bg2)"><div class="wrap">
+  <div class="head"><h2 data-en="A concrete example">Một ví dụ cụ thể</h2><p class="mute" data-en="Two dealers selling Quantum S2 in Orange, 30-day horizon.">Hai đại lý cùng bán Quantum S2 màu Cam, kỳ dự báo 30 ngày.</p></div>
+  <div class="exg">
+    <div class="card scroll"><table>
+      <thead><tr><th data-en="Indicator">Chỉ số</th><th class="num" data-en="Dealer A">Đại lý A</th><th class="num" data-en="Dealer B">Đại lý B</th></tr></thead>
+      <tbody><tr><td data-en="Current stock">Tồn kho hiện tại</td><td class="num" data-en="30 bikes">30 xe</td><td class="num" data-en="10 bikes">10 xe</td></tr>
+      <tr><td data-en="Forecast demand">Nhu cầu dự báo</td><td class="num" data-en="15 bikes">15 xe</td><td class="num" data-en="25 bikes">25 xe</td></tr>
+      <tr><td data-en="Expected gap">Chênh lệch dự kiến</td><td class="num pos" style="font-weight:700" data-en="15 surplus">Dư 15 xe</td><td class="num neg" style="font-weight:700" data-en="15 short">Thiếu 15 xe</td></tr>
+      <tr><td data-en="Safety stock kept (30%)">Tồn an toàn giữ lại (30%)</td><td class="num" data-en="5 bikes">5 xe</td><td class="num">–</td></tr></tbody></table></div>
+    <div class="exres"><div class="big"><b>10</b><span data-en="bikes proposed to move from A to B">xe được đề xuất chuyển từ A sang B</span></div>
+      <ul class="ul">
+        <li data-en="&lt;b&gt;Dealer A&lt;/b&gt; recovers capital tied up in surplus and still keeps 5 bikes as buffer."><b>Đại lý A</b> có cơ hội thu hồi vốn từ hàng đang dư, vẫn giữ 5 xe dự phòng.</li>
+        <li data-en="&lt;b&gt;Dealer B&lt;/b&gt; gets bikes to serve customers; shortage drops from 15 to 5."><b>Đại lý B</b> có thêm xe để phục vụ khách, thiếu hụt giảm từ 15 còn 5 xe.</li>
+        <li data-en="&lt;b&gt;Dat Bike&lt;/b&gt; captures the sale without adding stock to the network."><b>Dat Bike</b> tận dụng cơ hội bán hàng mà không bơm thêm tồn kho vào mạng lưới.</li>
+      </ul>
+      <button class="btn or" data-runab style="margin-top:16px"><span data-en="Run this in the dashboard">Chạy ví dụ này trong bảng điều khiển</span> →</button></div>
+  </div>
+</div></section>
+<section class="band"><div class="wrap">
+  <div class="head"><h2 data-en="The logic behind each proposal">Logic phía sau đề xuất</h2><p class="mute" data-en="The prototype uses simple, explainable logic that can be swapped for a richer forecasting model once real data is available.">Bản thử nghiệm dùng logic đơn giản, dễ giải thích; có thể thay bằng mô hình dự báo phức tạp hơn khi có dữ liệu thật.</p></div>
+  <div class="logic">
+    <div><small data-en="Forecast">Dự báo</small><h3 data-en="Weighted moving average">Trung bình trượt có trọng số</h3><p data-en="Last 3 months of sales (weights 20% · 30% · 50%) times a trend factor capped at ±15%. Confidence comes from 6-month sales volatility.">Doanh số 3 tháng gần nhất (trọng số 20% · 30% · 50%) nhân hệ số xu hướng, giới hạn ±15%. Độ tin cậy dựa trên mức biến động doanh số 6 tháng.</p></div>
+    <div><small data-en="Allocation">Phân bổ</small><h3 data-en="Keep safety stock, prefer short routes">Giữ tồn an toàn, ưu tiên tuyến gần</h3><p data-en="Only stock above the safety buffer can move. Same city first, then same region, then across regions, to keep transport cost lowest.">Chỉ chuyển phần dư sau khi đã giữ lại tồn an toàn. Ưu tiên đại lý cùng thành phố, rồi cùng khu vực, rồi liên vùng, để chi phí vận chuyển thấp nhất.</p></div>
+    <div><small data-en="Condition">Điều kiện</small><h3 data-en="Only propose when it pays">Chỉ đề xuất khi có lãi</h3><p data-en="Margin per extra sale plus holding cost avoided must exceed transport cost per bike. Otherwise no proposal is made.">Biên lợi nhuận mỗi xe bán thêm + chi phí lưu kho tránh được phải lớn hơn chi phí vận chuyển mỗi xe. Không đạt thì hệ thống không đề xuất.</p></div>
+  </div>
+</div></section>
+<section class="band" style="padding-top:0"><div class="wrap">
+  <div class="head"><h2 data-en="From managing single stores to optimising the network">Từ quản lý từng cửa hàng sang tối ưu cả mạng lưới</h2></div>
+  <div class="cmpT scroll"><table>
+    <thead><tr><th data-en="Traditional distribution">Phân phối truyền thống</th><th>Smart Stock Network</th></tr></thead>
+    <tbody>
+      <tr><td data-en="Stock managed dealer by dealer">Quản lý tồn kho riêng lẻ từng đại lý</td><td data-en="Stock managed at network level">Quản lý tồn kho ở cấp độ mạng lưới</td></tr>
+      <tr><td data-en="React after surplus or shortage happens">Phản ứng sau khi đã dư hoặc thiếu hàng</td><td data-en="Forecast before the problem occurs">Dự báo trước khi vấn đề xảy ra</td></tr>
+      <tr><td data-en="Allocation driven by purchase orders">Phân bổ chủ yếu dựa trên đơn nhập</td><td data-en="Allocation driven by demand signals">Phân bổ dựa trên tín hiệu nhu cầu</td></tr>
+      <tr><td data-en="Individual dealership optimisation">Tối ưu cho từng đại lý</td><td data-en="Network-wide optimisation">Tối ưu toàn mạng lưới</td></tr>
+      <tr><td data-en="Reactive distribution">Phân phối bị động</td><td data-en="Proactive distribution">Phân phối chủ động</td></tr>
+    </tbody></table></div>
+  <p class="callout" data-en="The innovation is &lt;b&gt;not an inventory dashboard&lt;/b&gt;; it changes how Dat Bike allocates product across the system as it opens 150 more stores.">Đổi mới ở đây <b>không phải một bảng theo dõi tồn kho</b>, mà là thay đổi cách Dat Bike phân bổ sản phẩm trên toàn hệ thống khi mở thêm 150 cửa hàng.</p>
+</div></section>
+</main>
+
+<main data-page="dashboard" hidden>
+<section class="band" id="app"><div class="wrap">
+  <div class="apphead">
+    <div><h1 class="pt" data-en="Stock coordination dashboard">Bảng điều khiển tồn kho</h1><p class="mute" style="margin-top:8px" data-en="Illustrative figures to simulate the logic, not real Dat Bike data.">Số liệu minh họa để mô phỏng logic, không phải dữ liệu thật của Dat Bike.</p></div>
+    <div class="f"><span data-en="Data scenario">Kịch bản dữ liệu</span><div class="seg" id="scnSeg">
+      <button data-v="net" aria-pressed="true" data-en="10-dealer network">Mạng lưới 10 đại lý</button>
+      <button data-v="ab" aria-pressed="false" data-en="Dealer A – B example">Ví dụ Đại lý A – B</button>
+      <button data-v="custom" aria-pressed="false" hidden data-en="Your data">Dữ liệu của bạn</button>
+    </div></div>
+  </div>
+  <nav class="tabs" aria-label="Screens">
+    <a href="#overview" data-tab="overview" data-en="Network Overview">Tổng quan mạng lưới</a>
+    <a href="#forecast" data-tab="forecast" data-en="Demand Forecast">Dự báo nhu cầu</a>
+    <a href="#recommend" data-tab="recommend"><span data-en="Smart Recommendation">Đề xuất thông minh</span> <b id="recCount">0</b></a>
+    <a href="#impact" data-tab="impact" data-en="Impact Simulation">Mô phỏng tác động</a>
+  </nav>
+  <div class="filters">
+    <div class="f"><label for="fReg" data-en="Region">Khu vực</label><select id="fReg"><option value="all" data-en="Nationwide">Toàn quốc</option><option value="Bắc" data-en="North">Miền Bắc</option><option value="Trung" data-en="Central">Miền Trung</option><option value="Nam" data-en="South">Miền Nam</option></select></div>
+    <div class="f"><label for="fModel" data-en="Model">Mẫu xe</label><select id="fModel"></select></div>
+    <div class="f"><label for="fColor" data-en="Colour">Màu sắc</label><select id="fColor"></select></div>
+    <div class="f hz"><span data-en="Forecast horizon">Kỳ dự báo</span><div class="seg" id="hSeg"><button data-v="30" aria-pressed="true"></button><button data-v="60" aria-pressed="false"></button><button data-v="90" aria-pressed="false"></button></div></div>
+    <div class="f end"><button class="btn line sm" id="resetF" data-en="Clear filters">Xóa bộ lọc</button></div>
+  </div>
+
+  <div class="screen" id="s-overview">
+    <div class="kpis" id="ovKpis"></div>
+    <div class="grid2">
+      <div class="card"><h3 data-en="Stock by dealer">Tồn kho theo đại lý</h3><p class="sub" data-en="Gap = current stock − forecast demand. Positive means potential surplus, not necessarily dead stock. Click a row for the detailed forecast.">Chênh lệch = tồn hiện tại − nhu cầu dự báo. Dương là dư tiềm năng, chưa chắc là tồn chết. Bấm một dòng để xem dự báo chi tiết.</p>
+        <div class="scroll"><table class="stack" id="ovTable"></table></div></div>
+      <div style="display:grid;gap:14px;align-content:start">
+        <div class="card"><h3 data-en="Priority alerts">Cảnh báo ưu tiên</h3><p class="sub" data-en="Largest gaps by model and colour">Chênh lệch lớn nhất theo mẫu xe và màu</p><div class="alerts" id="ovAlerts"></div></div>
+        <div class="mapwrap"><div class="legend" style="padding:4px 6px"><span><i style="background:var(--red)"></i><span data-en="Short">Thiếu</span></span><span><i style="background:var(--blue)"></i><span data-en="Surplus">Dư</span></span><span><i style="background:#8a8a92"></i><span data-en="Balanced">Cân bằng</span></span><span><i class="ln"></i><span data-en="Transfer">Điều chuyển</span></span></div>
+          <div class="fig mapfig"><svg id="ovMap" class="map" viewBox="0 0 140 160" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map"></svg></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="s-forecast" hidden>
+    <div class="fchead">
+      <div class="f"><label for="fDealer" data-en="Dealer">Đại lý</label><select id="fDealer"></select></div>
+      <p class="mute" style="font-size:14px;max-width:34em" data-en="Illustrative method: weighted moving average of the last 3 months × trend factor (capped at ±15%). Confidence is based on sales volatility.">Phương pháp minh họa: trung bình trượt có trọng số 3 tháng gần nhất × hệ số xu hướng (giới hạn ±15%). Độ tin cậy dựa trên mức biến động doanh số.</p>
+    </div>
+    <div class="grid2">
+      <div class="card"><h3 id="fcTitle"></h3><p class="sub" data-en="Bikes sold per month · click a column to see its figures">Xe bán mỗi tháng · bấm vào từng cột để xem số liệu</p>
+        <div class="pick" id="fcPick" aria-live="polite"></div>
+        <div class="fig fcfig" id="fcFig" tabindex="0" aria-label="Biểu đồ, dùng phím mũi tên để chọn cột"><svg id="fcChart" role="img" aria-label="Sales and forecast chart"></svg></div>
+        <div class="legend lgc"><span><i style="background:var(--hist)"></i><span data-en="Actual sales">Doanh số thực tế</span></span><span><i class="hatch"></i><span data-en="Forecast">Dự báo</span></span><span><i style="background:var(--or)"></i><span data-en="Selected column">Cột đang chọn</span></span><span><i class="dash"></i><span data-en="Current stock / month">Tồn hiện tại / tháng</span></span></div></div>
+      <div class="card"><h3 data-en="This forecast period">Kỳ dự báo này</h3><p class="sub" id="fcSub"></p>
+        <div class="stats" id="fcStats"></div>
+        <div class="cmp" id="fcCmp"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px"><h3 data-en="Detail by model and colour">Chi tiết theo mẫu xe và màu</h3><p class="sub" data-en="Change model, colour or horizon in the filter bar above to update">Đổi mẫu xe, màu hoặc kỳ dự báo ở thanh lọc phía trên để cập nhật</p>
+      <div class="scroll"><table class="stack" id="fcTable"></table></div></div>
+  </div>
+
+  <div class="screen" id="s-recommend" hidden>
+    <div class="kpis" id="rcKpis"></div>
+    <div class="recbar">
+      <div class="chips" id="stChips"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ok sm" id="accAll" data-en="Accept all pending">Chấp nhận tất cả đang chờ</button><button class="btn line sm" id="resetDec" data-en="Reset">Đặt lại</button></div>
+    </div>
+    <div class="recs" id="recList"></div>
+    <p class="note" data-en="Dealers make the final call. Dat Bike only proposes based on the forecast; a proposal appears only when net value per bike is positive under the assumptions in Impact Simulation.">Đại lý là người quyết định cuối cùng. Dat Bike chỉ đề xuất dựa trên dự báo; đề xuất chỉ xuất hiện khi giá trị ròng mỗi xe dương theo giả định ở màn Mô phỏng tác động.</p>
+  </div>
+
+  <div class="screen" id="s-impact" hidden>
+    <div class="recbar"><div class="f"><span data-en="Simulate with">Mô phỏng với</span><div class="seg inline" id="impSeg"><button data-v="all" aria-pressed="true" data-en="All except declined">Mọi đề xuất trừ bị từ chối</button><button data-v="acc" aria-pressed="false" data-en="Approved only">Chỉ đề xuất đã duyệt</button></div></div><span class="mute" id="impScope" style="font-size:14px"></span></div>
+    <div class="kpis" id="imKpis"></div>
+    <div class="grid2b">
+      <div class="card"><h3 data-en="Before and after transfers">Trước và sau điều chuyển</h3><p class="sub" data-en="Same horizon, same filters">Cùng kỳ dự báo, cùng bộ lọc</p>
+        <div class="scroll"><table class="imp-tbl" id="imTable"></table></div>
+        <div class="interp" id="imInterp"></div></div>
+      <div class="card"><h3 data-en="Estimated financial value">Giá trị tài chính ước tính</h3><p class="sub" id="wfSub"></p>
+        <div class="wf" id="imWf"></div>
+        <h3 style="margin-top:20px;font-size:16px" data-en="When a transfer creates value">Điều kiện để tạo giá trị</h3>
+        <p class="sub" style="margin:4px 0 0" data-en="A bike is worth moving when margin from the extra sale + holding cost avoided &gt; transport cost">Một xe đáng chuyển khi biên lợi nhuận bán thêm + chi phí lưu kho tránh được &gt; chi phí vận chuyển</p>
+        <div class="cond" id="imCond"></div></div>
+    </div>
+    <div class="card" style="margin-top:14px"><h3 data-en="Gap by dealer">Chênh lệch theo đại lý</h3><p class="sub" data-en="Top bar: before · bottom bar: after transfers">Vạch trên: trước · vạch dưới: sau điều chuyển</p><div class="dg" id="imDg"></div></div>
+    <div class="card" style="margin-top:14px"><div class="head"><h3 data-en="Simulation assumptions">Giả định mô phỏng</h3><button class="btn line sm" id="resetA" data-en="Restore defaults">Khôi phục mặc định</button></div><p class="sub" data-en="Changes recalculate proposals and impact instantly">Thay đổi sẽ tính lại đề xuất và tác động ngay</p>
+      <div class="assume" id="assume"></div></div>
+  </div>
+
+  <details><summary data-en="Use your team's data (paste CSV from Excel)">Dùng dữ liệu của nhóm bạn (dán CSV từ Excel)</summary>
+    <p class="mute" style="font-size:14px;margin-top:8px" data-en="Each row: dealer, region (Bắc/Trung/Nam), model, colour, stock, then sales for the last 6 months (oldest → newest).">Mỗi dòng: đại lý, khu vực (Bắc/Trung/Nam), mẫu xe, màu, tồn kho, rồi doanh số 6 tháng gần nhất (cũ → mới).</p>
+    <textarea id="csv" spellcheck="false" aria-label="CSV">Đại lý A,Nam,ERA E1,Đỏ,30,15,15,15,15,15,15
+Đại lý B,Nam,ERA E1,Đỏ,10,25,25,25,25,25,25</textarea>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="btn or sm" id="loadCsv" data-en="Load data">Nạp dữ liệu</button><span class="mute" id="csvMsg" style="font-size:14px"></span></div>
+  </details>
+</div></section>
+</main>
+
+<footer class="band" style="padding-block:28px"><div class="wrap">
+  <span><b style="color:#fff">DAT BIKE · Smart Stock Network</b> · <span data-en="Team concept prototype, not an official Dat Bike product. All figures are illustrative.">Bản ý tưởng của nhóm, không phải sản phẩm chính thức của Dat Bike. Mọi số liệu là minh họa.</span></span>
+  <span class="flinks"><a href="#home" data-en="Home">Trang chủ</a><a href="#cach-hoat-dong" data-en="How it works">Cách hoạt động</a><a href="#dashboard" data-en="Dashboard">Bảng điều khiển</a></span>
+</div></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+{
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const DEF={margin:3,hold:.5,safety:30,city:.4,reg:.9,near:2.2,far:3.5};
+const st={pick:null,lang:'vi',scn:'net',reg:'all',model:'all',color:'all',h:30,dealer:'all',tab:'overview',dec:{},adj:{},edit:null,sf:'all',imp:'all',a:{...DEF}};
+try{const s=JSON.parse(localStorage.getItem('ssn')||'{}');if(s.dec)st.dec=s.dec;if(s.adj)st.adj=s.adj;if(s.a)st.a={...DEF,...s.a};if(s.lang)st.lang=s.lang}catch(e){}
+const save=()=>{try{localStorage.setItem('ssn',JSON.stringify({dec:st.dec,adj:st.adj,a:st.a,lang:st.lang}))}catch(e){}};
+const L=(vi,en)=>st.lang==='en'?en:vi;
+const nf=(n,d=0)=>Number(n).toLocaleString(st.lang==='en'?'en-US':'vi-VN',{maximumFractionDigits:d});
+const sg=n=>(n>0?'+':n<0?'−':'')+nf(Math.abs(n));
+const U=()=>L('tr₫','M₫');
+const tr=n=>(n<0?'−':'')+nf(Math.abs(n),1)+' '+U();
+const trk=n=>(n<0?'−':'')+nf(Math.abs(n),1)+'<small>'+U()+'</small>';
+const COLORHEX={'Trắng':'#f2f2f2','Cam':'#ff5a1f','Đen':'#1c1c1c','Xám':'#8a8f98','Đỏ':'#d7262e'};
+const CN={'Trắng':'White','Cam':'Orange','Đen':'Black','Xám':'Grey','Đỏ':'Red'};
+const cn=c=>st.lang==='en'?(CN[c]||c):c;
+const sw=c=>`<span class="sw" style="background:${COLORHEX[c]||'#888'}"></span>`;
+const REGN={Bắc:['Miền Bắc','North'],Trung:['Miền Trung','Central'],Nam:['Miền Nam','South']};
+const rn=r=>L(...(REGN[r]||[r,r]));
+const TIER={city:['Cùng thành phố','Same city'],reg:['Cùng khu vực','Same region'],near:['Liên vùng gần','Adjacent regions'],far:['Bắc ↔ Nam','North ↔ South']};
+const tn=k=>L(...TIER[k]);
+const MONTHS={vi:['T5','T6','T7','T8','T9','T10'],en:['May','Jun','Jul','Aug','Sep','Oct']};
+
+/* ---------- geography ---------- */
+const VN='M23.7 133.1L23.8 134.7L23.4 135.9L23.2 136.7L22.6 134.6L21.8 133.6L22.9 132.7L23.7 133.1ZM61.2 21.9L59.6 22.0L58.6 22.9L57.9 23.3L56.9 23.6L55.8 24.2L55.5 25.1L55.4 25.7L55.2 26.5L53.4 27.5L52.6 27.0L51.7 27.3L50.8 27.5L50.1 27.4L49.5 27.1L48.8 27.0L49.3 28.9L49.5 29.6L47.5 31.7L47.7 33.1L47.2 34.1L46.1 34.9L43.8 37.1L42.8 37.1L42.1 37.6L40.5 41.1L40.4 42.3L40.2 43.2L40.2 44.1L39.5 45.7L38.8 46.4L38.6 47.3L39.7 49.2L40.4 50.5L40.7 51.3L41.2 52.0L42.9 53.8L43.6 54.4L44.5 54.8L46.2 56.5L47.0 57.5L46.6 58.3L46.8 59.8L45.6 59.3L47.2 60.4L49.3 63.3L51.1 64.8L53.0 66.4L53.6 68.0L55.2 69.1L57.1 70.6L57.5 71.3L58.8 72.1L59.6 73.0L59.8 73.8L60.8 73.7L61.7 73.7L62.3 74.6L63.1 75.4L63.4 76.1L64.1 76.7L65.2 78.3L65.7 79.4L67.0 81.2L67.9 82.2L68.6 82.7L69.3 83.2L70.1 85.2L70.5 87.0L71.2 89.0L71.9 89.8L71.9 91.5L72.4 93.2L72.9 94.3L73.0 95.5L73.4 96.5L73.9 98.4L73.8 99.3L73.4 98.5L73.5 101.1L73.8 102.5L73.6 104.2L74.0 104.8L74.7 106.7L75.1 107.4L75.1 109.8L75.3 111.0L74.7 110.3L74.3 109.5L73.7 109.9L73.1 110.5L74.0 113.1L73.0 112.9L73.1 116.3L73.5 117.1L73.4 117.9L73.1 116.9L72.6 117.9L72.6 118.6L72.9 119.3L72.7 120.4L72.3 121.0L71.4 121.1L71.2 122.3L70.9 123.6L69.3 123.8L68.2 125.0L66.7 125.4L65.4 126.6L64.1 127.7L63.1 127.8L62.4 128.0L61.5 129.8L59.9 130.0L57.3 131.4L56.4 132.1L55.5 132.4L54.3 133.0L53.7 132.3L52.7 132.0L52.2 131.4L52.0 130.7L51.5 132.6L50.9 133.2L50.0 132.7L49.2 131.6L48.1 132.3L49.0 132.4L49.7 133.2L49.5 134.0L48.4 134.1L47.0 134.0L48.0 134.7L49.2 135.1L49.8 135.5L49.1 136.4L48.6 137.1L48.5 138.0L48.0 138.4L46.5 137.6L43.6 134.8L44.0 135.6L47.1 138.8L47.6 139.8L47.7 140.6L46.9 141.4L45.9 141.4L44.2 140.2L41.5 137.4L40.6 137.0L43.3 140.3L43.8 141.1L44.2 142.0L43.8 143.0L37.4 146.1L36.5 147.4L35.7 149.0L34.5 149.9L33.8 150.7L31.6 151.2L30.4 151.0L31.6 149.5L30.9 149.0L30.8 145.1L31.2 140.9L31.7 138.8L32.5 138.3L33.5 138.0L33.4 137.0L32.9 136.3L32.3 136.0L31.4 135.9L30.7 135.0L29.4 135.3L28.9 134.9L28.7 134.3L28.0 133.6L27.1 132.9L28.0 132.4L28.5 131.8L29.7 131.8L30.9 131.8L31.7 131.1L32.5 130.4L33.1 130.0L33.0 128.9L32.9 128.1L34.2 128.0L35.4 128.4L36.3 127.6L37.0 127.5L38.2 127.3L39.3 127.1L40.4 127.7L40.8 128.4L41.6 128.1L42.1 128.5L43.2 129.0L43.8 129.0L43.5 127.8L43.8 126.9L43.2 126.2L41.2 124.6L40.9 124.0L40.9 123.3L40.8 122.1L40.7 121.4L40.8 120.6L41.5 120.5L42.3 119.4L43.2 119.5L44.5 119.9L45.5 120.2L46.2 120.0L46.3 117.9L47.0 117.3L48.3 117.3L49.0 117.2L49.6 116.5L51.2 116.2L52.3 115.2L53.4 114.2L54.5 113.8L55.6 114.4L56.7 113.4L57.0 112.7L57.2 111.6L57.0 109.9L56.8 108.7L56.5 107.7L56.4 106.7L57.1 104.7L57.7 102.6L57.5 101.8L56.9 100.5L56.3 98.8L55.6 97.1L55.1 96.3L55.3 93.9L55.4 93.3L56.1 92.5L56.6 91.5L57.0 90.5L56.8 88.8L56.7 87.8L56.5 87.2L57.2 86.4L57.5 85.8L57.9 85.1L58.1 84.5L57.8 83.9L57.3 83.1L56.2 82.3L55.1 81.4L54.5 80.8L54.1 80.2L53.7 79.5L53.7 78.6L55.3 77.8L55.8 77.0L55.2 76.3L53.9 75.6L52.5 74.2L51.9 73.9L51.2 73.5L50.4 71.8L49.9 72.1L49.3 72.5L48.5 72.1L48.0 71.0L47.5 70.5L47.4 68.8L47.1 67.5L46.3 67.0L45.4 65.6L44.8 64.8L42.3 62.9L41.3 61.7L40.1 60.6L39.3 59.6L38.7 58.7L38.4 57.8L38.3 57.2L37.6 56.2L37.0 55.5L36.5 55.2L35.9 55.1L35.3 54.6L34.2 53.6L33.8 52.9L33.5 52.0L33.7 51.3L34.1 50.5L32.6 49.7L29.9 49.0L28.9 48.4L28.0 47.7L27.3 47.2L24.1 45.0L23.1 44.7L22.2 44.3L22.0 43.6L23.3 42.8L23.7 42.2L23.5 41.4L23.2 40.5L24.2 40.2L25.5 40.1L28.3 40.9L30.2 39.5L30.7 38.6L30.9 38.0L32.0 36.8L32.0 36.2L31.6 35.3L30.8 34.8L29.7 34.9L29.4 34.1L29.0 33.3L27.8 32.9L26.8 32.8L26.9 32.1L27.6 31.7L28.6 31.0L28.1 30.1L27.5 29.7L26.4 28.8L24.9 27.9L24.0 27.5L21.9 28.4L21.0 28.9L20.3 29.8L19.5 30.0L18.8 29.6L17.9 29.2L15.5 28.6L14.4 28.1L12.3 25.0L12.0 24.3L12.2 23.6L12.4 22.6L12.6 21.9L12.9 21.3L12.9 20.2L12.3 19.8L11.7 18.9L11.3 19.9L10.5 20.4L10.0 19.9L9.9 19.3L9.7 18.5L8.5 17.4L8.1 16.7L6.7 15.2L5.6 14.2L5.1 13.2L6.1 12.3L6.8 11.5L7.4 10.5L7.7 9.9L8.3 9.5L9.6 10.0L10.8 10.5L11.8 11.1L12.2 11.7L12.8 12.3L13.5 12.5L14.2 12.0L14.7 11.6L15.3 10.6L16.0 9.9L16.3 9.4L18.0 11.0L18.9 9.7L19.4 9.2L22.2 11.6L23.0 11.1L23.2 10.3L23.6 9.5L24.4 9.0L25.1 8.9L25.9 9.9L26.6 10.0L28.1 9.0L29.1 8.8L30.2 8.4L30.7 7.9L30.8 6.9L31.0 6.0L31.8 5.4L32.6 5.1L34.4 4.2L34.9 3.8L36.0 3.9L36.9 4.6L37.4 5.2L37.7 5.8L39.3 6.7L40.1 7.3L40.7 7.8L41.9 7.6L42.9 7.3L43.7 7.3L44.6 8.3L45.5 8.4L46.6 8.1L47.4 7.9L48.2 8.3L49.7 9.2L49.3 9.9L49.0 10.6L48.3 11.1L47.5 12.0L47.4 13.0L47.9 13.8L48.5 14.6L48.6 15.6L48.5 16.8L49.2 17.0L49.9 17.2L50.7 17.5L51.5 17.8L52.0 18.7L53.6 19.8L54.5 19.9L55.2 20.9L56.0 20.6L58.0 20.9L59.1 20.4L60.6 21.4L61.2 21.9ZM48.2 150.2L48.6 149.3L48.5 150.0ZM53.4 133.0L52.7 133.6L53.3 132.8ZM50.5 28.8L50.0 28.6L49.9 27.7L50.4 28.4ZM57.6 24.8L56.2 26.1L56.2 24.6L57.3 24.8ZM56.8 27.7L55.7 28.0L56.4 27.5L56.8 26.9L56.8 27.7ZM52.1 29.5L51.0 28.8L52.3 28.6L52.2 29.4Z';
+const PX=(lon,lat)=>[(lon-101.6)*9.6,(23.7-lat)*10];
+const ISL={hs:[[111.2,16.6],[111.6,16.45],[111.75,16.8],[112.3,16.95],[112.05,16.3],[111.5,16.05],[112.7,16.6],[112.35,16.5],[111.9,16.7]],
+ ts:[[112.2,11.4],[113.0,10.9],[114.3,10.4],[114.9,10.0],[115.6,10.6],[114.1,8.9],[113.4,8.7],[112.7,9.4],[114.6,11.3],[115.2,9.5],[113.9,9.8],[111.9,8.6],[114.35,10.85],[113.2,9.9]]};
+
+/* ---------- scenarios ---------- */
+const NET_D=[
+ {id:'hn1',name:'Hà Nội – Cầu Giấy',short:'Cầu Giấy',city:'HN',reg:'Bắc',lon:105.80,lat:21.03,dx:33,dy:31,side:'l',size:14,tr:.02},
+ {id:'hn2',name:'Hà Nội – Long Biên',short:'Long Biên',city:'HN',reg:'Bắc',lon:105.89,lat:21.05,dx:42,dy:19,side:'t',size:9,tr:-.04,bias:2.1},
+ {id:'hp',name:'Hải Phòng',short:'Hải Phòng',city:'HP',reg:'Bắc',lon:106.68,lat:20.86,side:'r',size:7,tr:0},
+ {id:'dn',name:'Đà Nẵng',short:'Đà Nẵng',city:'DN',reg:'Trung',lon:108.2,lat:16.05,side:'r',size:8,tr:.03},
+ {id:'nt',name:'Nha Trang',short:'Nha Trang',city:'NT',reg:'Trung',lon:109.19,lat:12.24,side:'r',size:5,tr:-.05,bias:1.9},
+ {id:'bd',name:'Bình Dương',short:'Bình Dương',city:'BD',reg:'Nam',lon:106.65,lat:10.98,dx:46,dy:121,side:'l',size:10,tr:.06,bias:.5},
+ {id:'bh',name:'Biên Hòa',short:'Biên Hòa',city:'BH',reg:'Nam',lon:106.82,lat:10.95,dx:55,dy:112,side:'l',size:7,tr:0},
+ {id:'hcm2',name:'TP.HCM – Thủ Đức',short:'Thủ Đức',city:'HCM',reg:'Nam',lon:106.77,lat:10.85,dx:56,dy:126,side:'r',size:13,tr:.05,bias:.45},
+ {id:'hcm1',name:'TP.HCM – Quận 7',short:'Quận 7',city:'HCM',reg:'Nam',lon:106.72,lat:10.73,dx:45,dy:134.5,side:'b',size:16,tr:.01,bias:1.6},
+ {id:'ct',name:'Cần Thơ',short:'Cần Thơ',city:'CT',reg:'Nam',lon:105.78,lat:10.03,dx:35,dy:142,side:'l',size:6,tr:.03,bias:.6}];
+const MODELS=[{m:'ERA E1',sh:.26,cols:['Xám','Đen','Trắng','Đỏ'],cs:[.3,.3,.25,.15]},{m:'ERA E2',sh:.16,cols:['Đen'],cs:[1]},
+ {m:'Quantum S1',sh:.22,cols:['Trắng','Cam','Đen'],cs:[.35,.3,.35]},{m:'Quantum S2',sh:.2,cols:['Trắng','Cam','Đen'],cs:[.35,.3,.35]},{m:'Quantum S3',sh:.16,cols:['Trắng','Cam','Đen'],cs:[.35,.3,.35]}];
+function netScenario(){
+  let seed=11;const rnd=()=>{seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+  const rows=[];
+  NET_D.forEach(d=>MODELS.forEach(M=>M.cols.forEach((c,ci)=>{
+    const base=d.size*M.sh*M.cs[ci]*2.2;
+    const hist=[0,1,2,3,4,5].map(i=>Math.max(0,Math.round(base*(1+d.tr*(i-5))*(.82+rnd()*.36))));
+    const mult=d.bias?d.bias*(.75+rnd()*.5):.6+rnd()*.9;
+    rows.push({d:d.id,model:M.m,color:c,stock:Math.round(base*mult),hist});
+  })));
+  return {dealers:NET_D,rows};
+}
+const SC={net:netScenario(),custom:null,ab:{dealers:[
+  {id:'A',name:'Dealer A',short:'Dealer A',city:'HCM',reg:'Nam',lon:106.72,lat:10.73,dx:43,dy:120,side:'l'},
+  {id:'B',name:'Dealer B',short:'Dealer B',city:'HCM',reg:'Nam',lon:106.82,lat:10.95,dx:56,dy:126,side:'r'}],
+  rows:[{d:'A',model:'Quantum S2',color:'Cam',stock:30,hist:[15,15,15,15,15,15]},{d:'B',model:'Quantum S2',color:'Cam',stock:10,hist:[25,25,25,25,25,25]}]}};
+
+/* ---------- model ---------- */
+function fc(r,h){
+  const x=r.hist,w=x[3]*.2+x[4]*.3+x[5]*.5,a3=(x[3]+x[4]+x[5])/3,p3=(x[0]+x[1]+x[2])/3;
+  const t=p3?Math.min(1.15,Math.max(.85,a3/p3)):1,f=Math.round(w*t*h/30);
+  const mean=x.reduce((a,b)=>a+b,0)/6,cv=mean?Math.sqrt(x.reduce((a,b)=>a+(b-mean)**2,0)/6)/mean:1;
+  return {f,cv};
+}
+const cvOf=h=>{const mn=h.reduce((a,b)=>a+b,0)/6;return mn?Math.sqrt(h.reduce((a,b)=>a+(b-mn)**2,0)/6)/mn:1};
+const confOf=cv=>cv<.15?[L('Cao','High'),'var(--green)']:cv<.3?[L('Trung bình','Medium'),'var(--or-ink)']:[L('Thấp','Low'),'var(--red)'];
+const tier=(a,b)=>a.city===b.city?'city':a.reg===b.reg?'reg':(a.reg==='Trung'||b.reg==='Trung')?'near':'far';
+let M={};
+function compute(){
+  const S=SC[st.scn],DM=Object.fromEntries(S.dealers.map(d=>[d.id,d]));
+  const rows=S.rows.map(r=>({...r,key:r.d+'|'+r.model+'|'+r.color,...fc(r,st.h)}));
+  const m=st.h/30,A=st.a,recs=[],sku={};
+  rows.forEach(r=>(sku[r.model+'|'+r.color]??=[]).push(r));
+  for(const [k,list] of Object.entries(sku)){
+    const av=new Map(list.map(r=>[r.d,Math.max(0,r.stock-r.f-Math.ceil(r.f*A.safety/100))]));
+    for(const rc of list.filter(r=>r.f>r.stock).sort((a,b)=>(b.f-b.stock)-(a.f-a.stock))){
+      let short=rc.f-rc.stock;
+      const cands=list.filter(r=>r.d!==rc.d&&av.get(r.d)>0).map(r=>({r,t:tier(DM[r.d],DM[rc.d])})).sort((a,b)=>A[a.t]-A[b.t]||av.get(b.r.d)-av.get(a.r.d));
+      for(const {r,t} of cands){
+        if(short<=0)break;
+        const unit=A.margin+A.hold*m-A[t];if(unit<=0)continue;
+        const have=av.get(r.d),q=Math.min(short,have);
+        av.set(r.d,have-q);short-=q;
+        recs.push({id:k+'|'+r.d+'>'+rc.d,model:r.model,color:r.color,from:r.d,to:rc.d,q,max:have,t,unit,fr:r,tr:rc});
+      }
+    }
+  }
+  recs.forEach(x=>{x.s=st.dec[x.id]||'pend';x.eq=x.s==='dec'?0:x.s==='adj'?Math.min(st.adj[x.id]??x.q,x.max):x.q});
+  M={S,DM,rows,recs};
+}
+const passRow=r=>(st.reg==='all'||M.DM[r.d].reg===st.reg)&&(st.model==='all'||r.model===st.model)&&(st.color==='all'||r.color===st.color);
+const passRec=x=>(st.model==='all'||x.model===st.model)&&(st.color==='all'||x.color===st.color)&&(st.reg==='all'||M.DM[x.from].reg===st.reg||M.DM[x.to].reg===st.reg);
+const status=(s,f)=>{const g=s-f;return g<0?'short':g>Math.ceil(f*st.a.safety/100)?'over':'ok'};
+const SL={short:['Thiếu hàng','Shortage'],over:['Dư hàng','Surplus'],ok:['Cân bằng','Balanced']};
+const SCOL={short:'#ff5c61',over:'#6b9bff',ok:'#8a8a92'};
+function byDealer(rows,stockOf=r=>r.stock){
+  const o={};rows.forEach(r=>{const a=o[r.d]??={d:r.d,s:0,f:0};a.s+=stockOf(r);a.f+=r.f});
+  return M.S.dealers.filter(d=>o[d.id]).map(d=>o[d.id]);
+}
+const applied=()=>M.recs.filter(passRec).filter(x=>x.eq>0&&(st.imp==='all'||x.s==='acc'||x.s==='adj'));
+function afterMap(list){const mp={};list.forEach(x=>{mp[x.fr.key]=(mp[x.fr.key]||0)-x.eq;mp[x.tr.key]=(mp[x.tr.key]||0)+x.eq});return mp}
+
+/* ---------- map ---------- */
+const P=d=>d.dx!=null?[d.dx,d.dy]:PX(d.lon,d.lat);
+function drawMap(svg,dealers,agg,recs,reg){
+  const id=svg.id,band=(y1,y2,r)=>`<rect x="0" y="${y1}" width="140" height="${y2-y1}" fill="${reg===r?'#3b2418':r==='Trung'?'#29292e':'#25252a'}"/>`;
+  const rl=(x,y,r,a='start')=>`<text x="${x}" y="${y}" font-size="3.1" font-weight="600" text-anchor="${a}" fill="${reg===r?'#ff7a45':'#6f6f78'}">${rn(r)}</text>`;
+  let h=`<defs><clipPath id="c${id}"><path d="${VN}"/></clipPath><marker id="a${id}" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="3.6" markerHeight="3.6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#ff5a1f"/></marker></defs>
+  <g clip-path="url(#c${id})">${band(0,38,'Bắc')}${band(38,124,'Trung')}${band(124,170,'Nam')}<path d="M0 38H140M0 124H140" stroke="#55555e" stroke-width=".4" stroke-dasharray="1.4 1.4"/></g>
+  <path d="${VN}" fill="none" stroke="#5c5c66" stroke-width=".45" stroke-linejoin="round"/>
+  ${rl(66,40,'Bắc')}${rl(30,92,'Trung','middle')}${rl(17,153,'Nam','middle')}`;
+  const isl=(pts,lx,ly,t)=>pts.map(([lo,la])=>{const [x,y]=PX(lo,la);return`<circle cx="${x}" cy="${y}" r=".55" fill="#6f6f78"/>`}).join('')+`<text x="${lx}" y="${ly}" font-size="3" fill="#8a8a92" text-anchor="middle">${t}</text>`;
+  h+=isl(ISL.hs,102,80,L('QĐ. Hoàng Sa','Hoàng Sa Is.'))+isl(ISL.ts,118,120,L('QĐ. Trường Sa','Trường Sa Is.'));
+  const pos=Object.fromEntries(dealers.map(d=>[d.id,d])),pairs={};
+  recs.forEach(x=>{const k=x.from+'>'+x.to;pairs[k]=(pairs[k]||0)+(x.eq??x.q)});
+  dealers.forEach(d=>{if(d.dx!=null&&d.lon!=null){const [tx,ty]=PX(d.lon,d.lat),[x,y]=P(d);h+=`<line x1="${tx}" y1="${ty}" x2="${x}" y2="${y}" stroke="#8a8a92" stroke-width=".3"/><circle cx="${tx}" cy="${ty}" r=".45" fill="#c9c9cf"/>`}});
+  for(const [k,q] of Object.entries(pairs)){
+    if(q<=0)continue;const [a,b]=k.split('>').map(i=>pos[i]);if(!a||!b)continue;
+    const [ax,ay]=P(a),[bx,by]=P(b),dx=bx-ax,dy=by-ay,Ln=Math.hypot(dx,dy)||1,ux=dx/Ln,uy=dy/Ln,o=Math.min(9,Ln*.25);
+    const x1=ax+ux*3,y1=ay+uy*3,x2=bx-ux*3.6,y2=by-uy*3.6,cx=(x1+x2)/2-uy*o,cy=(y1+y2)/2+ux*o,w=Math.min(1.8,.6+q*.04);
+    const dd=`M${x1} ${y1}Q${cx} ${cy} ${x2} ${y2}`;
+    h+=`<path d="${dd}" fill="none" stroke="#ff5a1f" stroke-opacity=".3" stroke-width="${w}"/><path class="flow" d="${dd}" fill="none" stroke="#ff5a1f" stroke-width="${w*.6}" marker-end="url(#a${id})"><title>${esc(a.short)} → ${esc(b.short)}: ${q}</title></path>
+    <text x="${(x1+x2)/4+cx/2}" y="${(y1+y2)/4+cy/2}" font-size="3" font-weight="700" fill="#ffb08f" text-anchor="middle" dy="1.2" stroke="#151517" stroke-width="1.1" paint-order="stroke">${q}</text>`;
+  }
+  const maxS=Math.max(1,...agg.map(a=>a.s));
+  agg.forEach(a=>{const d=pos[a.d];if(!d)return;const [x,y]=P(d),s=status(a.s,a.f),r=1.5+Math.sqrt(a.s/maxS)*1.3,sd=d.side;
+    const lx=sd==='l'?x-r-1.5:sd==='r'?x+r+1.5:x,ly=sd==='t'?y-r-4.6:sd==='b'?y+r+2.6:y,an=sd==='l'?'end':sd==='r'?'start':'middle';
+    h+=`<g><title>${esc(d.name)}: ${L('tồn','stock')} ${a.s}, ${L('dự báo','forecast')} ${a.f}</title><circle cx="${x}" cy="${y}" r="${r+.9}" fill="${SCOL[s]}" opacity=".2"/><circle cx="${x}" cy="${y}" r="${r}" fill="${SCOL[s]}" stroke="#151517" stroke-width=".45"/>
+    <text x="${lx}" y="${ly}" font-size="3.3" font-weight="600" fill="#f2f2f2" text-anchor="${an}" dy="1.2" stroke="#151517" stroke-width=".8" paint-order="stroke">${esc(d.short)}</text>
+    <text x="${lx}" y="${ly+3.7}" font-size="2.8" font-weight="600" fill="${s==='ok'?'#a3a3ab':SCOL[s]}" text-anchor="${an}" dy="1.1" stroke="#151517" stroke-width="1" paint-order="stroke">${sg(a.s-a.f)}</text></g>`});
+  svg.innerHTML=h;
+}
+
+/* ---------- renders ---------- */
+const kpi=(label,val,sub,cls='')=>`<div class="kpi ${cls}"><span>${label}</span><b>${val}</b><small>${sub}</small></div>`;
+function dbar(g,max,op=1){const w=Math.min(50,Math.abs(g)/max*50);return`<div class="dbar" style="opacity:${op}"><i style="${g>=0?'left:50%':'right:50%'};width:${w}%;background:${g>=0?'var(--blue)':'var(--red)'}"></i></div>`}
+const empty=(n,t)=>`<tr><td colspan="${n}" class="empty">${t}</td></tr>`;
+function renderOverview(){
+  const rows=M.rows.filter(passRow),agg=byDealer(rows),S=agg.reduce((a,b)=>a+b.s,0),F=agg.reduce((a,b)=>a+b.f,0);
+  const short=rows.reduce((a,r)=>a+Math.max(0,r.f-r.stock),0),recs=M.recs.filter(passRec).filter(x=>x.s!=='dec');
+  const mv=recs.reduce((a,x)=>a+x.eq,0),nShort=agg.filter(a=>a.s<a.f).length;
+  $('#ovKpis').innerHTML=kpi(L('Tồn kho mạng lưới','Network stock'),nf(S),L(`xe tại ${agg.length} đại lý`,`bikes at ${agg.length} dealers`))+
+    kpi(L('Nhu cầu dự báo','Forecast demand'),nf(F),L(`${st.h} ngày tới`,`next ${st.h} days`))+
+    kpi(L('Thiếu hụt dự kiến','Expected shortage'),`<span class="red">${nf(short)}</span>`,L(`xe · ${nShort} đại lý thiếu tổng thể`,`bikes · ${nShort} dealers short overall`))+
+    kpi(L('Cơ hội điều chuyển','Transfer opportunity'),nf(mv),L(`xe · ${recs.length} đề xuất đang mở`,`bikes · ${recs.length} open proposals`),'hot');
+  const mx=Math.max(1,...agg.map(a=>Math.abs(a.s-a.f)));
+  $('#ovTable').innerHTML=`<thead><tr><th>${L('Đại lý','Dealer')}</th><th class="num">${L('Tồn','Stock')}</th><th class="num">${L('Dự báo','Forecast')}</th><th style="min-width:150px">${L('Chênh lệch','Gap')}</th><th>${L('Trạng thái','Status')}</th></tr></thead><tbody>${
+    agg.map(a=>{const d=M.DM[a.d],g=a.s-a.f,s=status(a.s,a.f);return`<tr class="click" data-dealer="${esc(d.id)}" tabindex="0"><td class="dname"><b>${esc(d.name)}</b><small>${rn(d.reg)}</small></td><td class="num">${nf(a.s)}</td><td class="num">${nf(a.f)}</td><td><div class="gap"><span class="num ${g>0?'pos':g<0?'neg':''}">${sg(g)}</span>${dbar(g,mx)}</div></td><td><span class="pill ${s}">${L(...SL[s])}</span></td></tr>`}).join('')||empty(5,L('Không có đại lý nào khớp bộ lọc','No dealers match the filters'))}</tbody>`;
+  const sk=rows.map(r=>({r,g:r.stock-r.f})).filter(o=>o.g!==0);
+  const top=[...sk.filter(o=>o.g<0).sort((a,b)=>a.g-b.g).slice(0,3),...sk.filter(o=>o.g>0).sort((a,b)=>b.g-a.g).slice(0,2)];
+  $('#ovAlerts').innerHTML=top.map(({r,g})=>`<div class="alert"><span class="dot" style="background:${g<0?'var(--red)':'var(--blue)'}"></span><span><b>${esc(M.DM[r.d].name)}</b> · ${sw(r.color)}${esc(r.model)} ${esc(cn(r.color))}</span><span class="num ${g<0?'neg':'pos'}" style="font-weight:700">${g<0?L('Thiếu ','Short ')+(-g):L('Dư ','Surplus ')+g}</span></div>`).join('')||`<div class="empty">${L('Không có chênh lệch đáng kể','No notable gaps')}</div>`;
+  drawMap($('#ovMap'),M.S.dealers.filter(d=>agg.find(a=>a.d===d.id)),agg,recs,st.reg);
+}
+let fcD=null;
+function renderForecast(){
+  const sel=$('#fDealer'),ds=M.S.dealers.filter(d=>st.reg==='all'||d.reg===st.reg);
+  if(st.dealer!=='all'&&!ds.find(d=>d.id===st.dealer))st.dealer='all';
+  sel.innerHTML=`<option value="all">${L('Tất cả đại lý','All dealers')} (${st.reg==='all'?L('toàn quốc','nationwide'):rn(st.reg)})</option>`+ds.map(d=>`<option value="${esc(d.id)}">${esc(d.name)}</option>`).join('');sel.value=st.dealer;
+  const rows=M.rows.filter(passRow).filter(r=>st.dealer==='all'||r.d===st.dealer);
+  const H=[0,0,0,0,0,0];rows.forEach(r=>r.hist.forEach((v,i)=>H[i]+=v));
+  const S=rows.reduce((a,r)=>a+r.stock,0),F=rows.reduce((a,r)=>a+r.f,0),cv=cvOf(H),[cl,cc]=confOf(cv),m=st.h/30;
+  fcD={H,F,S,m,cv,lo:Math.max(0,F*(1-cv)),hi:F*(1+cv)};
+  $('#fcTitle').textContent=L('Doanh số & dự báo · ','Sales & forecast · ')+(st.dealer==='all'?L('Tất cả đại lý','All dealers'):M.DM[st.dealer].name);
+  $('#fcSub').textContent=`${st.model==='all'?L('Mọi mẫu xe','All models'):st.model} · ${st.color==='all'?L('mọi màu','all colours'):cn(st.color)} · ${L(st.h+' ngày tới','next '+st.h+' days')}`;
+  const g=S-F,a3=Math.round((H[3]+H[4]+H[5])/3);
+  $('#fcStats').innerHTML=`<div class="stat"><span>${L('Bán TB 3 tháng','3-month avg sales')}</span><b>${nf(a3)}</b></div><div class="stat"><span>${L('Tồn hiện tại','Current stock')}</span><b>${nf(S)}</b></div><div class="stat"><span>${L('Dự báo '+st.h+' ngày',st.h+'-day forecast')}</span><b style="color:var(--or-ink)">${nf(F)}</b></div><div class="stat"><span>${L('Chênh lệch','Gap')}</span><b class="${g<0?'neg':g>0?'pos':''}">${sg(g)}</b></div>`;
+  const mx=Math.max(S,F,1);
+  $('#fcCmp').innerHTML=`<div class="row"><span>${L('Tồn kho','Stock')}</span><div class="bar"><i style="width:${S/mx*100}%;background:var(--hist)"></i></div><span class="num">${nf(S)}</span></div>
+  <div class="row"><span>${L('Nhu cầu','Demand')}</span><div class="bar"><i style="width:${F/mx*100}%;background:var(--or)"></i></div><span class="num">${nf(F)}</span></div>
+  <div class="row"><span>${L('Độ tin cậy','Confidence')}</span><span class="conf" style="color:${cc}">${cl} · ${L('dao động','range')} ±${Math.round(cv*100)}%</span><span></span></div>`;
+  const sk={};rows.forEach(r=>{const k=r.model+'|'+r.color,o=sk[k]??={model:r.model,color:r.color,s:0,f:0,h:[0,0,0,0,0,0]};o.s+=r.stock;o.f+=r.f;r.hist.forEach((v,i)=>o.h[i]+=v)});
+  $('#fcTable').innerHTML=`<thead><tr><th>${L('Mẫu xe','Model')}</th><th>${L('Màu','Colour')}</th><th>${L('Doanh số 6 tháng','6-month sales')}</th><th class="num">${L('Tồn','Stock')}</th><th class="num">${L('Dự báo','Forecast')}</th><th class="num">${L('Chênh lệch','Gap')}</th><th>${L('Độ tin cậy','Confidence')}</th></tr></thead><tbody>${
+    Object.values(sk).map(o=>{const [l,col]=confOf(cvOf(o.h)),g=o.s-o.f,mxh=Math.max(1,...o.h);
+      return`<tr><td><b>${esc(o.model)}</b></td><td>${sw(o.color)}${esc(cn(o.color))}</td><td><svg width="84" height="24" viewBox="0 0 84 24" aria-label="${o.h.join(', ')}"><polyline fill="none" stroke="var(--or)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="${o.h.map((v,i)=>`${4+i*15.2},${21-v/mxh*18}`).join(' ')}"/></svg></td><td class="num">${nf(o.s)}</td><td class="num">${nf(o.f)}</td><td class="num ${g<0?'neg':g>0?'pos':''}" style="font-weight:700">${sg(g)}</td><td><span class="conf" style="color:${col}">${l}</span></td></tr>`}).join('')||empty(7,L('Không có dữ liệu cho bộ lọc này','No data for these filters'))}</tbody>`;
+  drawFc();
+}
+const MFULL={vi:['Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10'],en:['May','June','July','August','September','October']};
+function renderPick(){
+  const {H,F,m,lo,hi,cv}=fcD,i=st.pick,el=$('#fcPick');
+  if(i<6){const v=H[i],pv=i?H[i-1]:null,ch=pv?Math.round((v-pv)/pv*1000)/10:null,avg=H.reduce((a,b)=>a+b,0)/6;
+    el.innerHTML=`<div><small>${MFULL[st.lang][i]} · ${L('doanh số thực tế','actual sales')}</small><b>${nf(v)} <span>${L('xe','bikes')}</span></b></div>
+    <div class="pk">${ch!=null?`<span class="pill ${ch>=0?'ok':'short'}">${ch>=0?'+':'−'}${nf(Math.abs(ch),1)}% ${L('so với tháng trước','vs previous month')}</span>`:''}<span class="pill pend">${v>=avg?'+':'−'}${nf(Math.abs(v-avg),1)} ${L('so với TB 6 tháng','vs 6-month avg')}</span></div>`}
+  else{const k=i-5,v=F/m,[cl,cc]=confOf(cv);
+    el.innerHTML=`<div><small>${L(`Dự báo tháng thứ ${k} (+${k*30} ngày)`,`Forecast month ${k} (+${k*30} days)`)}</small><b>${nf(Math.round(v))} <span>${L('xe','bikes')}</span></b></div>
+    <div class="pk"><span class="pill pend">${L('Dao động','Range')} ${nf(Math.round(lo/m))}–${nf(Math.round(hi/m))}</span><span class="pill" style="background:var(--bg2);color:${cc}">${L('Độ tin cậy','Confidence')}: ${cl}</span></div>`}
+}
+function drawFc(){
+  const s=$('#fcChart');if(!fcD||!s)return;const W=s.clientWidth,Ht=s.clientHeight;
+  const {H,F,S,m,lo,hi}=fcD,fm=F/m,sm=S/m,vals=[...H,...Array(m).fill(fm)],n=vals.length;
+  if(st.pick==null||st.pick>=n)st.pick=6;renderPick();if(!W||!Ht)return;
+  const top=Math.max(...vals,hi/m,sm,1)*1.14,small=W<520,pl=small?8:40,pr=8,pt=22,pb=30,cw=(W-pl-pr)/n,bw=Math.min(44,cw*.6),y=v=>pt+(Ht-pt-pb)*(1-v/top);
+  const step=Math.max(1,Math.ceil(top/4/5)*5);
+  let g=`<defs><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="var(--hist)" opacity=".4"/><rect width="3.5" height="7" fill="var(--hist)"/></pattern></defs>`;
+  for(let v=0;v<=top;v+=step)g+=`<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/>${small?'':`<text x="${pl-8}" y="${y(v)+4}" font-size="12" fill="var(--mute)" text-anchor="end">${nf(v)}</text>`}`;
+  const sep=pl+6*cw;g+=`<rect x="${sep}" y="${pt-10}" width="${W-pr-sep}" height="${y(0)-pt+10}" fill="var(--hist)" opacity=".1" rx="8"/><text x="${sep+8}" y="${pt+2}" font-size="11" fill="var(--mute)">${L('Dự báo','Forecast')}</text>`;
+  g+=`<line x1="${pl}" x2="${W-pr}" y1="${y(sm)}" y2="${y(sm)}" stroke="var(--ink)" stroke-width="1.5" opacity=".55" stroke-dasharray="5 4"/>`;
+  vals.forEach((v,i)=>{const x=pl+i*cw+(cw-bw)/2,f=i>=6,sel=i===st.pick,lab=f?'+'+(i-5)*30+L('n','d'):MONTHS[st.lang][i];
+    if(f&&sel)g+=`<rect x="${x-5}" y="${y(hi/m)}" width="${bw+10}" height="${Math.max(2,y(lo/m)-y(hi/m))}" rx="4" fill="var(--or)" opacity=".25"/>`;
+    g+=`<rect x="${x}" y="${y(v)}" width="${bw}" height="${Math.max(0,y(0)-y(v))}" rx="6" fill="${sel?'var(--or)':f?'url(#hatch)':'var(--hist)'}"/>`;
+    g+=`<text x="${x+bw/2}" y="${Ht-10}" font-size="12" fill="${sel?'var(--or-ink)':'var(--mute)'}" font-weight="${sel?700:500}" text-anchor="middle">${lab}</text>`;
+    if(sel)g+=`<text x="${x+bw/2}" y="${(f?y(hi/m):y(v))-8}" font-size="13" font-weight="800" fill="var(--or-ink)" text-anchor="middle" stroke="var(--card)" stroke-width="4" paint-order="stroke">${nf(Math.round(v))}</text>`;
+    g+=`<rect data-i="${i}" x="${pl+i*cw}" y="${pt-10}" width="${cw}" height="${Ht-pt+10}" fill="transparent" style="cursor:pointer"><title>${lab}: ${nf(Math.round(v))}</title></rect>`});
+  s.innerHTML=g;
+}
+const ST={pend:['Chờ duyệt','Pending'],acc:['Đã chấp nhận','Accepted'],adj:['Đã điều chỉnh','Adjusted'],dec:['Đã từ chối','Declined']};
+function renderRecs(){
+  const all=M.recs.filter(passRec),cnt={all:all.length,pend:0,acc:0,adj:0,dec:0};all.forEach(x=>cnt[x.s]++);
+  $('#recCount').textContent=cnt.pend;
+  const live=all.filter(x=>x.s!=='dec'),units=live.reduce((a,x)=>a+x.eq,0),cost=live.reduce((a,x)=>a+x.eq*st.a[x.t],0),val=live.reduce((a,x)=>a+x.eq*x.unit,0);
+  $('#rcKpis').innerHTML=kpi(L('Đề xuất','Proposals'),nf(all.length),L(cnt.pend+' đang chờ duyệt',cnt.pend+' pending'))+kpi(L('Xe được điều chuyển','Bikes moved'),nf(units),L('không tăng tồn toàn mạng','no extra network stock'))+kpi(L('Chi phí vận chuyển','Transport cost'),trk(cost),L('ước tính','estimated'))+kpi(L('Giá trị ròng ước tính','Estimated net value'),trk(val),L('sau chi phí vận chuyển','after transport cost'),'hot');
+  $('#stChips').innerHTML=[['all',['Tất cả','All']],...Object.entries(ST)].map(([k,l])=>`<button data-sf="${k}" aria-pressed="${st.sf===k}">${L(...l)} · ${cnt[k]}</button>`).join('');
+  const list=all.filter(x=>st.sf==='all'||x.s===st.sf).sort((a,b)=>(a.s==='pend'?0:1)-(b.s==='pend'?0:1)||b.q*b.unit-a.q*a.unit);
+  const B=(act,id,cls,t)=>`<button class="btn ${cls} sm" data-act="${act}" data-id="${esc(id)}">${t}</button>`;
+  $('#recList').innerHTML=list.map(x=>{const f=M.DM[x.from],t=M.DM[x.to],sur=x.fr.stock-x.fr.f,sh=x.tr.f-x.tr.stock,[cl]=confOf(x.tr.cv),sf=Math.ceil(x.fr.f*st.a.safety/100);
+    const acts=st.edit===x.id?`<div class="stepper"><button data-act="minus" data-id="${esc(x.id)}" aria-label="−">−</button><input type="number" id="q-${esc(x.id)}" min="1" max="${x.max}" value="${st.adj[x.id]??x.q}" aria-label="${L('Số xe','Bikes')}"><button data-act="plus" data-id="${esc(x.id)}" aria-label="+">+</button><span class="mute" style="font-size:13px">${L('tối đa','max')} ${x.max}</span></div>${B('save',x.id,'or',L('Lưu','Save'))}${B('cancel',x.id,'line',L('Hủy','Cancel'))}`
+      :x.s==='pend'?B('acc',x.id,'ok',L('Chấp nhận','Accept'))+B('edit',x.id,'line',L('Điều chỉnh','Adjust'))+B('dec',x.id,'no',L('Từ chối','Decline'))
+      :B('undo',x.id,'line',L('Hoàn tác','Undo'))+(x.s!=='dec'?B('edit',x.id,'line',L('Sửa số lượng','Edit quantity')):'');
+    const why=L(`${esc(f.short)} còn ${x.fr.stock} xe so với nhu cầu ${x.fr.f} (giữ lại ${sf} xe an toàn). ${esc(t.short)} chỉ có ${x.tr.stock} xe cho nhu cầu ${x.tr.f} trong ${st.h} ngày tới.`,
+      `${esc(f.short)} holds ${x.fr.stock} bikes against demand of ${x.fr.f} (keeping ${sf} as safety stock). ${esc(t.short)} has only ${x.tr.stock} for demand of ${x.tr.f} over the next ${st.h} days.`);
+    return`<article class="rec s-${x.s}"><div class="rectop"><span>${sw(x.color)}${esc(x.model)} · ${esc(cn(x.color))}</span><span class="pill ${x.s}">${L(...ST[x.s])}</span></div>
+    <div class="route"><div><small>${L('Gửi từ','From')}</small><b>${esc(f.name)}</b><span class="pos">${L('Dư','Surplus')} ${sur}</span></div>
+      <div class="qty"><b>${x.s==='dec'?x.q:x.eq}</b><small> ${L('xe','bikes')}</small><svg width="40" height="12" viewBox="0 0 40 12" style="display:block;margin:2px auto 0"><path d="M2 6h34M30 2l6 4-6 4" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>
+      <div><small>${L('Nhận tại','To')}</small><b>${esc(t.name)}</b><span class="neg">${L('Thiếu','Short')} ${sh}</span></div></div>
+    <p class="why">${why}</p>
+    <dl class="meta"><div><dt>${L('Tuyến','Route')}</dt><dd>${tn(x.t)}</dd></div><div><dt>${L('Chi phí vận chuyển','Transport cost')}</dt><dd>${tr(x.eq*st.a[x.t])}</dd></div><div><dt>${L('Giá trị ròng ước tính','Est. net value')}</dt><dd style="color:var(--green)">${tr(x.eq*x.unit)}</dd></div><div><dt>${L('Độ tin cậy dự báo','Forecast confidence')}</dt><dd>${cl}</dd></div></dl>
+    <div class="acts">${acts}</div></article>`}).join('')||`<div class="card empty" style="grid-column:1/-1">${all.length?L('Không có đề xuất ở trạng thái này.','No proposals with this status.'):L('Chưa có đề xuất nào có lợi với bộ lọc và giả định hiện tại.','No profitable proposals for the current filters and assumptions.')}</div>`;
+}
+const AF=[['margin',['Biên LN mỗi xe bán thêm','Margin per extra sale'],.1],['hold',['Lưu kho / xe / tháng','Holding cost / bike / month'],.1],['safety',['Tồn an toàn (% nhu cầu)','Safety stock (% of demand)'],5],['city',['Vận chuyển cùng thành phố','Transport, same city'],.1],['reg',['Vận chuyển cùng khu vực','Transport, same region'],.1],['near',['Vận chuyển liên vùng gần','Transport, adjacent regions'],.1],['far',['Vận chuyển Bắc ↔ Nam','Transport, North ↔ South'],.1]];
+function renderImpact(){
+  const rows=M.rows.filter(passRow),ap=applied(),mp=afterMap(ap),m=st.h/30,A=st.a,after=r=>r.stock+(mp[r.key]||0),sum=fn=>rows.reduce((a,r)=>a+fn(r),0);
+  const S0=sum(r=>r.stock),S1=sum(after),F=sum(r=>r.f),sh0=sum(r=>Math.max(0,r.f-r.stock)),sh1=sum(r=>Math.max(0,r.f-after(r)));
+  const ov0=sum(r=>Math.max(0,r.stock-r.f)),ov1=sum(r=>Math.max(0,after(r)-r.f));
+  const fr0=F?sum(r=>Math.min(r.stock,r.f))/F*100:100,fr1=F?sum(r=>Math.min(after(r),r.f))/F*100:100;
+  const ag0=byDealer(rows),ag1=byDealer(rows,after),n0=ag0.filter(a=>a.s<a.f).length,n1=ag1.filter(a=>a.s<a.f).length;
+  const units=ap.reduce((a,x)=>a+x.eq,0),rec=sh0-sh1,mg=rec*A.margin,hs=units*A.hold*m,tc=ap.reduce((a,x)=>a+x.eq*A[x.t],0),net=mg+hs-tc;
+  $('#impScope').textContent=L(`${ap.length} đề xuất · ${units} xe được mô phỏng`,`${ap.length} proposals · ${units} bikes simulated`);
+  $('#imKpis').innerHTML=kpi(L('Thiếu hụt giảm','Shortage reduced'),nf(rec),L(`từ ${nf(sh0)} còn ${nf(sh1)} xe`,`from ${nf(sh0)} to ${nf(sh1)} bikes`))+kpi(L('Tỷ lệ đáp ứng nhu cầu','Demand fill rate'),nf(fr1,1)+'%',L('trước: ','before: ')+nf(fr0,1)+'%')+kpi(L('Tồn kho toàn mạng','Network stock'),nf(S1),S1===S0?L('không đổi, không bơm thêm hàng','unchanged, no extra stock'):'')+kpi(L('Giá trị ròng ước tính','Estimated net value'),trk(net),L('trong '+st.h+' ngày','over '+st.h+' days'),'hot');
+  const d=(a,b,lowGood=true)=>{const x=b-a;if(!x)return'<span class="delta mute">0</span>';return`<span class="delta ${(lowGood?x<0:x>0)?'good':'bad'}">${sg(Math.round(x*10)/10)}</span>`};
+  const tr_=(l,a,b,f=v=>nf(v),lg=true)=>`<tr><td>${l}</td><td class="num">${f(a)}</td><td class="num">${f(b)}</td><td class="num">${d(a,b,lg)}</td></tr>`;
+  $('#imTable').innerHTML=`<thead><tr><th>${L('Chỉ số','Metric')}</th><th class="num">${L('Trước','Before')}</th><th class="num">${L('Sau','After')}</th><th class="num">${L('Thay đổi','Change')}</th></tr></thead><tbody>
+  ${tr_(L('Tồn kho toàn mạng','Network stock'),S0,S1)}${tr_(L('Xe thiếu so với dự báo','Bikes short of forecast'),sh0,sh1)}${tr_(L('Xe dư so với dự báo','Bikes above forecast'),ov0,ov1)}${tr_(L('Đại lý thiếu hàng','Dealers short'),n0,n1)}${tr_(L('Tỷ lệ đáp ứng','Fill rate'),fr0,fr1,v=>nf(v,1)+'%',false)}</tbody>`;
+  $('#imInterp').innerHTML=units?L(`<b>Diễn giải:</b> điều chuyển ${units} xe giúp giảm ${rec} xe thiếu hụt dự kiến mà không tăng tồn kho toàn mạng lưới. Doanh số thực tế, lợi ích dòng tiền, phí và chi phí logistics thực tế chưa được kiểm chứng bởi mô phỏng này.`,`<b>Interpretation:</b> moving ${units} bikes cuts the forecast shortage by ${rec} without increasing network-wide stock. Actual sales, cash-flow benefits, fees and logistics costs are not established by this simulation.`)
+    :L('<b>Chưa có điều chuyển nào được mô phỏng.</b> Hãy chấp nhận đề xuất ở màn Đề xuất thông minh, hoặc chọn “Mọi đề xuất trừ bị từ chối”.','<b>No transfers simulated yet.</b> Accept proposals in Smart Recommendation, or choose “All except declined”.');
+  $('#wfSub').textContent=L('Theo giả định bên dưới · đơn vị triệu đồng','Based on the assumptions below · million VND');
+  const mx=Math.max(mg,hs,tc,Math.abs(net),1),bar=(v,c)=>`<div class="bar"><i style="left:0;width:${Math.abs(v)/mx*100}%;background:${c}"></i></div>`;
+  $('#imWf').innerHTML=`<div class="row"><span>${L(`Biên LN từ ${rec} xe bán thêm`,`Margin from ${rec} extra sales`)}</span>${bar(mg,'var(--green)')}<span class="num">+${nf(mg,1)}</span></div>
+  <div class="row"><span>${L('Chi phí lưu kho tránh được','Holding cost avoided')}</span>${bar(hs,'var(--green)')}<span class="num">+${nf(hs,1)}</span></div>
+  <div class="row"><span>${L('Chi phí vận chuyển','Transport cost')}</span>${bar(tc,'var(--red)')}<span class="num">−${nf(tc,1)}</span></div>
+  <div class="row total"><span>${L('Giá trị ròng','Net value')}</span>${bar(net,net>=0?'var(--or)':'var(--red)')}<span class="num">${net<0?'−':''}${nf(Math.abs(net),1)}</span></div>`;
+  $('#imCond').innerHTML=Object.keys(TIER).map(k=>{const u=A.margin+A.hold*m-A[k];return`<div><span>${tn(k)} · ${nf(A[k],1)} ${U()}/${L('xe','bike')}</span><span class="pill ${u>0?'ok':'short'}">${u>0?L('Có lãi ','Pays ')+nf(u,1)+' '+U()+'/'+L('xe','bike'):L('Không đáng chuyển','Not worth moving')}</span></div>`}).join('');
+  const mxg=Math.max(1,...ag0.map(a=>Math.abs(a.s-a.f)));
+  $('#imDg').innerHTML=ag0.map((a,i)=>{const b=ag1[i],g0=a.s-a.f,g1=b.s-b.f;return`<div class="row"><span>${esc(M.DM[a.d].name)}</span><div class="bars">${dbar(g0,mxg,.45)}${dbar(g1,mxg)}</div><span class="num"><span class="${g0<0?'neg':'pos'}">${sg(g0)}</span> → <b class="${g1<0?'neg':g1>0?'pos':''}">${sg(g1)}</b></span></div>`}).join('')||`<div class="empty">${L('Không có dữ liệu','No data')}</div>`;
+  const box=$('#assume'),foc=document.activeElement?.dataset?.a;
+  box.innerHTML=AF.map(([k,l,s])=>`<div><label for="a-${k}">${L(...l)} (${k==='safety'?'%':U()})</label><input type="number" id="a-${k}" data-a="${k}" step="${s}" min="0" value="${A[k]}"></div>`).join('');
+  if(foc){const el=$('#a-'+foc);el.focus();try{const v=el.value;el.value='';el.value=v}catch(e){}}
+}
+function renderHero(){
+  const S=SC.net,rows=S.rows.map(r=>({...r,...fc(r,30)})),agg={};
+  rows.forEach(r=>{const a=agg[r.d]??={d:r.d,s:0,f:0};a.s+=r.stock;a.f+=r.f});
+  $('#hsDealers').textContent=S.dealers.length;
+  $('#hsShort').textContent=nf(rows.reduce((a,r)=>a+Math.max(0,r.f-r.stock),0));
+  const keep={scn:st.scn,h:st.h};let recs=M.recs;
+  if(st.scn!=='net'||st.h!==30){st.scn='net';st.h=30;const cur=M;compute();recs=M.recs;M=cur;Object.assign(st,keep)}
+  const live=recs.filter(x=>x.s!=='dec');
+  $('#hsMove').textContent=nf(live.reduce((a,x)=>a+x.eq,0));
+  const cur=M;M={...M,S,DM:Object.fromEntries(S.dealers.map(d=>[d.id,d]))};drawMap($('#heroMap'),S.dealers,Object.values(agg),live,null);M=cur;
+}
+function applyLang(){
+  document.documentElement.lang=st.lang;
+  $$('[data-en]').forEach(el=>{if(el.dataset.vi===undefined)el.dataset.vi=el.innerHTML;el.innerHTML=st.lang==='en'?el.dataset.en:el.dataset.vi});
+  $$('.lang button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.lang===st.lang));
+  $$('#hSeg button').forEach(b=>b.textContent=b.dataset.v+L(' ngày',' days'));
+  SC.ab.dealers.forEach(d=>{d.name=d.short=L('Đại lý ','Dealer ')+d.id});
+}
+let page='home';
+function render(){
+  compute();
+  $$('#scnSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===st.scn));
+  $$('#hSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v==st.h));
+  $$('#impSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===st.imp));
+  const models=[...new Set(M.S.rows.map(r=>r.model))];
+  if(st.model!=='all'&&!models.includes(st.model))st.model='all';
+  const cols=[...new Set(M.S.rows.filter(r=>st.model==='all'||r.model===st.model).map(r=>r.color))];
+  if(st.color!=='all'&&!cols.includes(st.color))st.color='all';
+  $('#fModel').innerHTML=`<option value="all">${L('Tất cả mẫu xe','All models')}</option>`+models.map(m=>`<option value="${esc(m)}">${esc(m)}</option>`).join('');$('#fModel').value=st.model;
+  $('#fColor').innerHTML=`<option value="all">${L('Tất cả màu','All colours')}</option>`+cols.map(c=>`<option value="${esc(c)}">${esc(cn(c))}</option>`).join('');$('#fColor').value=st.color;
+  $('#fReg').value=st.reg;
+  $$('.tabs a').forEach(a=>a.toggleAttribute('aria-current',a.dataset.tab===st.tab));
+  ['overview','forecast','recommend','impact'].forEach(t=>$('#s-'+t).hidden=t!==st.tab);
+  renderOverview();renderRecs();renderImpact();renderForecast();renderHero();
+}
+
+/* ---------- routing & events ---------- */
+const toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>{e.classList.remove('show')},2200)};
+const TABS=['overview','forecast','recommend','impact'];
+function route(){
+  const h=location.hash.slice(1);let pg='home';
+  if(TABS.includes(h)){st.tab=h;pg='dashboard'}else if(h==='dashboard')pg='dashboard';else if(h==='cach-hoat-dong')pg='how';
+  $$('main[data-page]').forEach(m=>m.hidden=m.dataset.page!==pg);
+  $$('.links a').forEach(a=>a.toggleAttribute('aria-current',a.dataset.p===pg));
+  document.title=pg==='home'?'Dat Bike Smart Stock':pg==='how'?L('Cách hoạt động','How it works')+' · Smart Stock':L('Bảng điều khiển','Dashboard')+' · Smart Stock';
+  const same=page===pg;page=pg;render();
+  if(pg==='dashboard'&&same&&TABS.includes(h))$('.tabs').scrollIntoView({block:'nearest'});else window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',route);
+document.addEventListener('click',e=>{
+  const ab=e.target.closest('[data-runab]');
+  if(ab){st.scn='ab';st.reg='all';st.dealer='all';st.model='all';st.color='all';if(location.hash==='#recommend')route();else location.hash='recommend';return}
+  const md=e.target.closest('[data-model]');if(md){st.scn='net';st.model=md.dataset.model;st.color='all';st.dealer='all'}
+  const lb=e.target.closest('.lang button');if(lb){st.lang=lb.dataset.lang;save();applyLang();route()}
+});
+$('#fReg').onchange=e=>{st.reg=e.target.value;render()};
+$('#fModel').onchange=e=>{st.model=e.target.value;render()};
+$('#fColor').onchange=e=>{st.color=e.target.value;render()};
+$('#fDealer').onchange=e=>{st.dealer=e.target.value;render()};
+$('#hSeg').onclick=e=>{const b=e.target.closest('button');if(b){st.h=+b.dataset.v;render()}};
+$('#impSeg').onclick=e=>{const b=e.target.closest('button');if(b){st.imp=b.dataset.v;render()}};
+$('#scnSeg').onclick=e=>{const b=e.target.closest('button');if(b){st.scn=b.dataset.v;st.dealer='all';st.reg='all';render();toast(b.textContent.trim())}};
+$('#resetF').onclick=()=>{st.reg='all';st.model='all';st.color='all';st.dealer='all';render()};
+const goDealer=row=>{st.dealer=row.dataset.dealer;location.hash='forecast'};
+$('#ovTable').onclick=e=>{const r=e.target.closest('tr[data-dealer]');if(r)goDealer(r)};
+$('#ovTable').onkeydown=e=>{const r=e.target.closest('tr[data-dealer]');if(r&&(e.key==='Enter'||e.key===' ')){e.preventDefault();goDealer(r)}};
+$('#stChips').onclick=e=>{const b=e.target.closest('button');if(b){st.sf=b.dataset.sf;renderRecs()}};
+$('#recList').onclick=e=>{
+  const b=e.target.closest('button[data-act]');if(!b)return;const id=b.dataset.id,x=M.recs.find(r=>r.id===id),act=b.dataset.act,inp=document.getElementById('q-'+id);
+  if(!x)return;
+  if(act==='acc'){st.dec[id]='acc';toast(L(`Đã chấp nhận: ${x.q} xe → ${M.DM[x.to].short}`,`Accepted: ${x.q} bikes → ${M.DM[x.to].short}`))}
+  else if(act==='dec'){st.dec[id]='dec';toast(L('Đã từ chối đề xuất','Proposal declined'))}
+  else if(act==='undo'){delete st.dec[id];delete st.adj[id];toast(L('Đã hoàn tác','Undone'))}
+  else if(act==='edit')st.edit=id;
+  else if(act==='cancel')st.edit=null;
+  else if(act==='minus'||act==='plus'){inp.value=Math.max(1,Math.min(x.max,(+inp.value||1)+(act==='plus'?1:-1)));return}
+  else if(act==='save'){const q=Math.max(1,Math.min(x.max,Math.round(+inp.value||1)));if(q===x.q){st.dec[id]='acc';delete st.adj[id]}else{st.dec[id]='adj';st.adj[id]=q}st.edit=null;toast(L('Đã lưu: ','Saved: ')+q+L(' xe',' bikes'))}
+  save();render();
+};
+$('#accAll').onclick=()=>{let n=0;M.recs.filter(passRec).forEach(x=>{if(x.s==='pend'){st.dec[x.id]='acc';n++}});save();render();toast(n?L(`Đã chấp nhận ${n} đề xuất`,`Accepted ${n} proposals`):L('Không còn đề xuất chờ duyệt','No pending proposals'))};
+$('#resetDec').onclick=()=>{st.dec={};st.adj={};st.edit=null;save();render();toast(L('Đã đặt lại mọi quyết định','All decisions reset'))};
+$('#assume').oninput=e=>{const k=e.target.dataset.a;if(!k)return;const v=parseFloat(e.target.value);if(isNaN(v)||v<0)return;st.a[k]=k==='safety'?Math.min(100,v):v;save();render()};
+$('#resetA').onclick=()=>{st.a={...DEF};save();document.activeElement?.blur();render();toast(L('Đã khôi phục giả định','Assumptions restored'))};
+$('#loadCsv').onclick=()=>{
+  const lines=$('#csv').value.trim().split(/\r?\n/).map(l=>l.split(/[,;\t]/).map(s=>s.trim())).filter(c=>c.length>=11&&!isNaN(+c[4]));
+  if(!lines.length){$('#csvMsg').textContent=L('Không đọc được dòng nào. Kiểm tra lại định dạng 11 cột.','No rows read. Check the 11-column format.');return}
+  const names=[...new Set(lines.map(c=>c[0]))],regOf=n=>{const r=lines.find(c=>c[0]===n)[1];return['Bắc','Trung','Nam'].includes(r)?r:'Nam'};
+  const BOX={Bắc:[[32,20],[46,34]],Trung:[[60,60],[74,112]],Nam:[[38,120],[64,142]]};
+  const dealers=names.map((n,i)=>{const reg=regOf(n),same=names.filter(m=>regOf(m)===reg),j=same.indexOf(n),[[x1,y1],[x2,y2]]=BOX[reg],t=same.length>1?j/(same.length-1):.5;
+    return{id:'c'+i,name:n,short:n.length>14?n.slice(0,13)+'…':n,city:n,reg,dx:j%2?x2:x1,dy:y1+(y2-y1)*t,side:j%2?'r':'l'}});
+  const idOf=Object.fromEntries(dealers.map(d=>[d.name,d.id]));
+  SC.custom={dealers,rows:lines.map(c=>({d:idOf[c[0]],model:c[2]||'—',color:c[3]||'—',stock:Math.max(0,Math.round(+c[4])),hist:c.slice(5,11).map(v=>Math.max(0,Math.round(+v||0)))}))};
+  $('#scnSeg [data-v=custom]').hidden=false;st.scn='custom';st.reg='all';st.dealer='all';st.model='all';st.color='all';render();
+  $('#csvMsg').textContent=L(`Đã nạp ${lines.length} dòng, ${dealers.length} đại lý.`,`Loaded ${lines.length} rows, ${dealers.length} dealers.`);
+};
+$('#fcChart').addEventListener('click',e=>{const r=e.target.closest('[data-i]');if(r){st.pick=+r.dataset.i;drawFc()}});
+$('#fcFig').addEventListener('keydown',e=>{if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight')return;e.preventDefault();const n=6+st.h/30;st.pick=Math.max(0,Math.min(n-1,(st.pick??6)+(e.key==='ArrowRight'?1:-1)));drawFc()});
+const roFc=new ResizeObserver(drawFc);roFc.observe($('#fcChart'));
+applyLang();route();
+}
+
+</script>
+</body>
+</html>
