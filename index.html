@@ -339,6 +339,7 @@ h1,h2,h3{line-height:1.22}
 .pt{line-height:1.22}
 .hero h1{letter-spacing:-.01em}h2,.pt{letter-spacing:-.005em}
 @media(max-width:700px){.links{display:flex;gap:2px}.links a{flex:1 1 auto;padding:0 8px}}
+.scnnote{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;background:var(--or-soft);border:1px solid color-mix(in srgb,var(--or) 35%,transparent);border-radius:14px;padding:10px 14px;margin-bottom:14px;font-size:15px}.scnnote[hidden]{display:none}.scnnote b{color:var(--or-ink)}
 </style>
 <script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
 </head>
@@ -471,6 +472,7 @@ h1,h2,h3{line-height:1.22}
       <button data-v="custom" aria-pressed="false" hidden data-en="Your data">Dữ liệu của bạn</button>
     </div></div>
   </div>
+  <div class="scnnote" id="scnNote" hidden><span id="scnText"></span><button class="btn line sm" id="backNet"></button></div>
   <nav class="tabs" aria-label="Screens">
     <a href="#overview" data-tab="overview" data-en="Network Overview">Tổng quan mạng lưới</a>
     <a href="#forecast" data-tab="forecast" data-en="Demand Forecast">Dự báo nhu cầu</a>
@@ -843,6 +845,8 @@ function render(){
   $$('#hSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v==st.h));
   $$('#impSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===st.imp));
   const models=[...new Set(M.S.rows.map(r=>r.model))];
+  const note=$('#scnNote');note.hidden=st.scn==='net';
+  if(st.scn!=='net'){$('#scnText').innerHTML=st.scn==='ab'?L('<b>Đang xem ví dụ Đại lý A – B.</b> Ví dụ này chỉ có 1 mẫu xe (Quantum S2 · Cam) nên bộ lọc mẫu xe và màu chỉ hiện 1 lựa chọn.','<b>Viewing the Dealer A – B example.</b> It has a single model (Quantum S2 · Orange), so the model and colour filters show one option.'):L('<b>Đang xem dữ liệu của bạn.</b> Bộ lọc chỉ hiện các mẫu xe và màu có trong dữ liệu đã nạp.','<b>Viewing your data.</b> Filters only list models and colours in the loaded data.');$('#backNet').textContent=L('Về mạng lưới 10 đại lý','Back to 10-dealer network')}
   if(st.model!=='all'&&!models.includes(st.model))st.model='all';
   const cols=[...new Set(M.S.rows.filter(r=>st.model==='all'||r.model===st.model).map(r=>r.color))];
   if(st.color!=='all'&&!cols.includes(st.color))st.color='all';
@@ -880,6 +884,7 @@ $('#fDealer').onchange=e=>{st.dealer=e.target.value;render()};
 $('#hSeg').onclick=e=>{const b=e.target.closest('button');if(b){st.h=+b.dataset.v;render()}};
 $('#impSeg').onclick=e=>{const b=e.target.closest('button');if(b){st.imp=b.dataset.v;render()}};
 $('#scnSeg').onclick=e=>{const b=e.target.closest('button');if(b){st.scn=b.dataset.v;st.dealer='all';st.reg='all';render();toast(b.textContent.trim())}};
+$('#backNet').onclick=()=>{st.scn='net';st.dealer='all';st.reg='all';st.model='all';st.color='all';render();toast(L('Đã về mạng lưới 10 đại lý','Back to the 10-dealer network'))};
 $('#resetF').onclick=()=>{st.reg='all';st.model='all';st.color='all';st.dealer='all';render()};
 const goDealer=row=>{st.dealer=row.dataset.dealer;location.hash='forecast'};
 $('#ovTable').onclick=e=>{const r=e.target.closest('tr[data-dealer]');if(r)goDealer(r)};
